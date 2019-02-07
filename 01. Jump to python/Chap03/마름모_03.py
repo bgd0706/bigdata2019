@@ -50,3 +50,5 @@ while True :
     print(' ', end='')
     print('-'*(col), end='') # 아랫쪽 테두리
     print(" ")
+
+    # modify1
