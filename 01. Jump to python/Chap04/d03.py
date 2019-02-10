@@ -11,7 +11,7 @@ def make_world_star(candidate_list) :
         print("아이돌 " + i + " 월드스타 등극")
 
 f = open("연습생.txt", 'r', encoding="UTF-8")
-lines = f.readlines()
+lines = f.read().splitlines()
 f.close()
 
 candidate_list = []

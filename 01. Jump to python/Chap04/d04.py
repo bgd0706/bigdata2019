@@ -1,6 +1,6 @@
 def search_visitor(name) :
     f = open('방명록.txt', 'r', encoding='UTF-8')
-    lines = f.readlines()
+    lines = f.read().splitlines()
     for i in lines :
         info = i.split(" ")
         if (name == info[0]) :
