@@ -2,13 +2,14 @@ class Restaurant :
     def __init__ (self, name, type) :
         self.restaurant_name = name
         self.cuisine_type = type
-        self.number_served = 0
+
+    number_served = 0
 
     def describe_restaurant(self) :
         print ("저희 레스토랑 명칭은 [%s] 이고 [%s] 전문점입니다." %(self.restaurant_name, self.cuisine_type))
 
     def open_restaurant(self) :
-        print ("저희 [%s] 레스토랑 오픈했습니다. 어서오세요." %(self.restaurant_name))
+        print ("저희 [%s] 레스토랑이 오픈했습니다." %(self.restaurant_name))
 
     def reset_number_served(self, number):
         self.number_served = number
@@ -25,12 +26,11 @@ menu = input("레스토랑 이름과 요리 종류를 선택하시오.(공백으
 res = Restaurant(menu[0], menu[1])
 
 res.describe_restaurant()
-res.open_restaurant()
 
 open = input("레스토랑을 오픈하시겠습니까? (y/n) ")
 
 if open == 'y' :
-    print("저희 %s 레스토랑이 오픈했습니다." %(res.restaurant_name))
+    res.open_restaurant()
     while True :
         choice = input("어서오세요. 몇명이십니까? (초기화:0, 종료:-1, 누적고객 확인:p)")
 
