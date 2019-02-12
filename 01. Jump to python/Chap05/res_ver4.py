@@ -6,6 +6,7 @@ class Restaurant :
         self.f = open("고객서빙현황로그.txt", 'w')
 
     todays_customer = 0
+    reset_accum = 0
 
     def describe_restaurant(self) :
         print ("저희 레스토랑 명칭은 [%s] 이고 [%s] 전문점입니다." %(self.restaurant_name, self.cuisine_type))
@@ -14,14 +15,16 @@ class Restaurant :
         print ("저희 [%s] 레스토랑이 오픈했습니다." %(self.restaurant_name))
 
     def reset_number_served(self, number):
+        self.reset_accum = number
         print("손님 카운팅을 %s으로 초기화 하였습니다." % (number))
 
     def increment_number_served(self, number):
+        self.reset_accum += number
         self.todays_customer += number
         print("손님 %s명 들어오셨습니다. 자리를 안내해 드리겠습니다." %(number))
 
     def check_customer_number(self):
-        print("지금까지 총 %s명 손님께서 오셨습니다." %(self.todays_customer))
+        print("지금까지 총 %s명 손님께서 오셨습니다." %(self.reset_accum))
 
     def __del__(self):
         self.f.write(str(int(self.todays_customer)+int(self.number_served)))
