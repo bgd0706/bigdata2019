@@ -1,9 +1,9 @@
 def search_visitor(name) :
     f = open('방명록.txt', 'r', encoding='UTF-8')
-    lines = f.read().splitlines()
+    lines = f.read().splitlines() # 한줄씩 읽는다. (이름+생년월일)
     for i in lines :
-        info = i.split(" ")
-        if (name == info[0]) :
+        info = i.split(" ") # 이름과 생년월일을 info리스트에 분할하여 넣는다.
+        if (name == info[0]) : #이름은 info[0]에 저장되어 있으므로
             return name
     return ''
 

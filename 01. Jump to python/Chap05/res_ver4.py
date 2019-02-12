@@ -3,6 +3,7 @@ class Restaurant :
         self.restaurant_name = name
         self.cuisine_type = type
         self.number_served = total
+        self.f = open("고객서빙현황로그.txt", 'w')
 
     todays_customer = 0
 
@@ -13,8 +14,7 @@ class Restaurant :
         print ("저희 [%s] 레스토랑이 오픈했습니다." %(self.restaurant_name))
 
     def reset_number_served(self, number):
-        self.number_served = number
-        print("손님 카운팅을 %s으로 초기화 하였습니다." %(self.number_served))
+        print("손님 카운팅을 %s으로 초기화 하였습니다." % (number))
 
     def increment_number_served(self, number):
         self.todays_customer += number
@@ -24,17 +24,16 @@ class Restaurant :
         print("지금까지 총 %s명 손님께서 오셨습니다." %(self.todays_customer))
 
     def __del__(self):
-        f = open("고객서빙현황로그.txt", 'w')
-        f.write('\n' + str(int(self.todays_customer)+int(self.number_served)))
-        f.close()
-
-f = open("고객서빙현황로그.txt", 'w')
-f.write('0')
-f.close()
+        self.f.write(str(int(self.todays_customer)+int(self.number_served)))
+        self.f.close()
 
 menu = input("레스토랑 이름과 요리 종류를 선택하시오.(공백으로 구분) : ").split(" ")
 
-res = Restaurant(menu[0], menu[1], 0)
+with open('고객서빙현황로그.txt') as f:
+    line = [lines.rstrip() for lines in f]
+for i in line:
+    total = int(i)
+res = Restaurant(menu[0], menu[1], total)
 
 res.describe_restaurant()
 
@@ -44,32 +43,16 @@ if opening == 'y' :
     res.open_restaurant()
 
     while True :
-        with open('고객서빙현황로그.txt') as f:
-            line = [lines.rstrip() for lines in f]
-        for i in line:
-            total = int(i)
-
         choice = input("어서오세요. 몇명이십니까? (초기화:0, 종료:-1, 누적고객 확인:p)")
 
-        if choice != 'p' :
-            choice = int(choice)
-
-        if choice == -1 :
-            print("%s 레스토랑 문닫습니다." %(res.restaurant_name))
-            print("이용해 주셔서 감사합니다.")
-            del Restaurant
-            exit()
-        elif choice == 'p' :
+        if choice == 'p' :
             res.check_customer_number()
-        else :
+        else:
+            choice = int(choice)
             if choice == 0:
                 res.reset_number_served(choice)
-
-            else :
+            elif choice == -1:
+                print("%s 레스토랑 문닫습니다." % (res.restaurant_name))
+                exit()
+            else:
                 res.increment_number_served(choice)
-
-            f = open("고객서빙현황로그.txt", 'w')
-            f.write(str(res.todays_customer))
-            f.close()
-            res = Restaurant(menu[0], menu[1], res.todays_customer)
-

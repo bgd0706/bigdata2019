@@ -34,15 +34,14 @@ if open == 'y' :
     while True :
         choice = input("어서오세요. 몇명이십니까? (초기화:0, 종료:-1, 누적고객 확인:p)")
 
-        if choice != 'p' :
-            choice = int(choice)
-
-        if choice == 0 :
-            res.reset_number_served(0)
-        elif choice == -1 :
-            print("%s 레스토랑 문닫습니다." %(res.restaurant_name))
-            exit()
-        elif choice == 'p' :
+        if choice == 'p' :
             res.check_customer_number()
         else :
-            res.increment_number_served(choice)
+            choice = int(choice)
+            if choice == 0 :
+                res.reset_number_served(choice)
+            elif choice == -1 :
+                print("%s 레스토랑 문닫습니다." %(res.restaurant_name))
+                exit()
+            else :
+                res.increment_number_served(choice)
