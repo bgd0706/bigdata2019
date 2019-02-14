@@ -3,7 +3,7 @@ class Restaurant :
         self.restaurant_name = name
         self.cuisine_type = type
         self.number_served = total
-        self.f = open("고객서빙현황로그.txt", 'w')
+        self.f = open("고객서빙현황로그.txt", 'r+')
 
     todays_customer = 0
     reset_accum = 0
