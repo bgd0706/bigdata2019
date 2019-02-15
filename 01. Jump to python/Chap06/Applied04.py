@@ -1,16 +1,19 @@
-try :
-    def sum (a, b) :
-        return a+b
+def sum (a,b) :
+    return print(a+b)
 
-    while True :
-        number = input("두 수를 입력하세요 ('종료' 입력시 프로그램 종료): ").split(' ')
-        print(sum( int(number[0]), int(number[1]) ))
-        if number[0].isdigit() :
-            raise ValueError("%s번째 입력이 [%s]입니다. 숫자를 입력하세요." % (0, int(number[0])))
-        if int(number[1]) != int() :
-            raise ValueError("%s번째 입력이 [%s]입니다. 숫자를 입력하세요." % (1, int(number[1])))
-
-        if number == '종료' :
-            exit()
-except ValueError  as  e:
-    print(e)
+while True :
+    number = input("두 수를 입력하세요 ('종료' 입력시 프로그램 종료) : ").split(' ')
+    if number == '종료' :
+        exit()
+    find =0
+    try :
+        a = int(number[0])
+    except ValueError :
+        print("죄송합니다. 첫번째 입력을 %s 입력하셨습니다. 숫자를 입력하세요." %number[0])
+        find +=1
+    try :
+        b = int(number[1])
+    except ValueError :
+        print("죄송합니다. 두번째 입력을 %s 입력하셨습니다. 숫자를 입력하세요." %number[1])
+        find +=1
+    if find == 0 : sum(a,b)
