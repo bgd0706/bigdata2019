@@ -2,11 +2,11 @@ class Restaurant :
     def __init__ (self, name, type, total) :
         self.restaurant_name = name
         self.cuisine_type = type
-        self.number_served = total
+        self.number_served = total # 가게 총 누적고객수 (3번과는 다름)
         self.f = open("고객서빙현황로그.txt", 'r+')
 
-    todays_customer = 0
-    reset_accum = 0
+    todays_customer = 0 # 오늘 총 누적고객수
+    reset_accum = 0 # reset_number_served에서 0을 초기화하기 위한 변수
 
     def describe_restaurant(self) :
         print ("저희 레스토랑 명칭은 [%s] 이고 [%s] 전문점입니다." %(self.restaurant_name, self.cuisine_type))
@@ -27,7 +27,7 @@ class Restaurant :
         print("지금까지 총 %s명 손님께서 오셨습니다." %(self.reset_accum))
 
     def __del__(self):
-        self.f.write(str(int(self.todays_customer)+int(self.number_served)))
+        self.f.write(str(int(self.todays_customer)+int(self.number_served))) # 누적된 손님 = 어제까지 누적된 손님 + 오늘 누적된 손님
         self.f.close()
 
 menu = input("레스토랑 이름과 요리 종류를 선택하시오.(공백으로 구분) : ").split(" ")
@@ -35,8 +35,8 @@ menu = input("레스토랑 이름과 요리 종류를 선택하시오.(공백으
 with open('고객서빙현황로그.txt') as f:
     line = [lines.rstrip() for lines in f]
 for i in line:
-    total = int(i)
-res = Restaurant(menu[0], menu[1], total)
+    total = int(i) #int형으로 해주어야 함
+res = Restaurant(menu[0], menu[1], total) # 프로그램이 항상 실행될 때 마다 누적된 값을 저장해야 하기 위해
 
 res.describe_restaurant()
 

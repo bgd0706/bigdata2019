@@ -1,14 +1,17 @@
-import os
-from os import rename
+import shutil
 
 f = open('learning_python.txt', 'r+')
 lines = f.read().splitlines()
+
 for line in lines :
     line = line.replace("python", "C")
-    # with open('learning_python.txt', 'a') as f :
     f.write(line+'\n')
+f.close()
+
+shutil.copy('learning_python.txt', 'learning_python_copied.txt')
+
+f = open('learning_python_copied.txt', 'r')
+lines = f.read().splitlines()
 for line in lines :
     print(line)
-
-os.rename('learning_python.txt', 'learning_python_copyed.txt')
-
+f.close()

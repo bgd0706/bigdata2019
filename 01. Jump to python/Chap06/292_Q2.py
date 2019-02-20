@@ -1,3 +1,9 @@
-case = input("입력하시요. : ")
+while True :
+    num = input("수를 입력하세요. : ")
 
-print (list(map(lambda n:len(set(n))==10 and len(n) ==10, case.split())))
+    if  len(num)!= 10 or len(num) > len(set(num)) :
+        print ("false")
+    else :
+        print("true")
+    if num == "종료" :
+        exit()

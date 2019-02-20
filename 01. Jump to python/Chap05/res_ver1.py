@@ -1,5 +1,5 @@
 class Restaurant :
-    def __init__ (self, name, type) :
+    def __init__ (self, name, type) : # name은 레스토랑 이름, type은 레스토랑 종류
         self.restaurant_name = name
         self.cuisine_type = type
 
