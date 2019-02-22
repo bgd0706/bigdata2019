@@ -1,0 +1,63 @@
+[
+    {
+        "address": "대구광역시 파티마 병원 옆 포시즌 302호",
+        "student_ID": "ITT001",
+        "student_age": 31,
+        "student_name": "김기정",
+        "total_course_info": {
+            "learning_course_info": [
+                {
+                    "close_date": "2018-09-05",
+                    "course_code": "IB171106",
+                    "course_name": "IoT 빅데이터 실무반",
+                    "open_date": "2017-11-06",
+                    "teacher": "이현구"
+                }
+            ],
+            "num_of_course_learned": 2
+        }
+    },
+    {
+        "address": "대구광역시 달서구 성지로 14안길 17",
+        "student_ID": "ITT002",
+        "student_age": 29,
+        "student_name": "전수범",
+        "total_course_info": {
+            "learning_course_info": [
+                {
+                    "close_date": "2018-09-05",
+                    "course_code": "IB171106",
+                    "course_name": "IoT 빅데이터 실무반",
+                    "open_date": "2017-11-06",
+                    "teacher": "이현구"
+                },
+                {
+                    "close_date": "2018-08-05",
+                    "course_code": "OB171106",
+                    "course_name": "오픈소스기반 빅데이터 실무반",
+                    "open_date": "2018-01-06",
+                    "teacher": "이현구"
+                }
+            ],
+            "num_of_course_learned": 1
+        }
+    },
+    {
+        "address": "동구 신암동",
+        "student_ID": "ITT003",
+        "student_age": "29",
+        "student_name": "전민하",
+        "total_course_info": {
+            "learning_course_info": [
+                {
+                    "close_date": "2019-01-01",
+                    "course_code": "IB2929",
+                    "course_name": "할렐루야",
+                    "open_date": "2018-01-01",
+                    "teacher": "이현구"
+                }
+            ],
+            "num_of_course_learned": "2"
+        }
+    }
+]

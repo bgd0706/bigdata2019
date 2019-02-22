@@ -65,16 +65,4 @@
 			</language>
 		</practicable_computer_languages>
 	</student>
-	<student ID="ITT008" name="&#51060;&#51221;&#54732;" sex="&#45224;">
-		<age>30</age>
-		<major>&#51204;&#51088; &#44277;&#54617;</major>
-		<practicable_computer_languages>
-			<language level="&#51473;" name="C">
-				<period value="1&#45380;" />
-			</language>
-			<language level="&#54616;" name="Verilog">
-				<period value="3&#44060;&#50900;" />
-			</language>
-		</practicable_computer_languages>
-	</student>
-<student id="ITT009" name="&#44608;&#54812;&#49324;" sex="&#50668;"><age>22</age><major>&#52380;&#47928;&#54617;&#44284;</major><practicable_computer_languages><language level="&#54616;" name="C"><period value="2&#45380;" /></language></practicable_computer_languages></student></student_list>
+	<student ID="ITT009" name="&#44032;&#44032;" sex="&#45224;"><age>23</age><major>&#50500;&#50500;</major><practicable_computer_languages /></student><student ID="ITT010" name="dkdk" sex="ska"><age>23</age><major>3</major><practicable_computer_languages /></student><student ID="ITT011" name="dkdk" sex="ska"><age>2233</age><major>dk</major><practicable_computer_languages /></student></student_list>
