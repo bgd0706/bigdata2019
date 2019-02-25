@@ -24,6 +24,7 @@ del g_json_big_data[2] # 요소를 완전히 날림
 print(g_json_big_data[1]["레벨 2-3 키"]["레벨 3-1 키"][0]["레벨 4-1 키"])
 g_json_big_data[1]["레벨 2-3 키"]["레벨 3-1 키"][0]["레벨 4-1 키"] = 24 # int형은 "" 안하게
 print(len(g_json_big_data))
+
 with open('sample_modify_json', 'w', encoding='utf8') as outfile:
  readable_result = json.dumps(g_json_big_data, indent=4, sort_keys=True, ensure_ascii=False)
  outfile.write(readable_result)

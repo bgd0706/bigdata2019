@@ -1,11 +1,7 @@
 from xml.etree.ElementTree import Element, SubElement, parse, ElementTree
 
-def digit(x):
-  if x < 10:
-    return "00" + str(x)
-  elif x < 100:
-    return "0" + str(x)
-  return str(x)
+def digit(x): # x를 기준으로 3만큼 오른쪽 정렬하고, 빈 곳은 0으로 치환
+   return "{0:0>3}".format(x)
 
 tree = parse("students_info.xml")
 
@@ -97,13 +93,11 @@ while True :
 
     elif menu_input == 3 : # 조회
         while True :
-            read_menu_input = input("<조회 서브 메뉴>\n1. 개별 학생 조회\n2. 전체 학생 조회\n3. 상위 메뉴"
-                                    "\n4. 종료\n메뉴 입력 : ")
+            read_menu_input = input("<조회 서브 메뉴>\n1. 개별 학생 조회\n2. 전체 학생 조회\n3. 상위 메뉴\n4. 종료\n메뉴 입력 : ")
             if read_menu_input == '1' :
                 while True :
                     saved_number = []
-                    search_con = input("<검색 조건>\n1. ID\n2. 이름\n3. 나이\n4. 전공\n5. 컴퓨터 언어 명"
-                                       "\n6. 컴퓨터 언어 학습 기간"
+                    search_con = input("<검색 조건>\n1. ID\n2. 이름\n3. 나이\n4. 전공\n5. 컴퓨터 언어 명\n6. 컴퓨터 언어 학습 기간"
                                        "\n7. 컴퓨터 언어 레벨\n8. 상위메뉴\n메뉴 입력: ")
                     if search_con == '8' :
                         break
@@ -151,9 +145,9 @@ while True :
                                             saved_number.append(stu)
                                     break
                                 break
-                    number_standard = len(set(saved_number))
+                    number_standard = set(saved_number)
                     if number_standard == 1 :
-                        for index in range(number_standard) :
+                        for index in range(len(number_standard)) :
                             stu = saved_number[index]
                             print("* %s (%s)" % (stu_list[stu].get("name"), stu_list[stu].get("ID")))
                             print(" - 성별: %s" % (stu_list[stu].get("sex")))
@@ -173,7 +167,7 @@ while True :
                                         print("  > %s (학습기간: %s, Level: %s)"
                                               % (actual_lang_name, actual_lang_period, actual_lang_level))
                     else :
-                        for index in range(number_standard) :
+                        for index in range(len(number_standard)) :
                             stu = saved_number[index]
                             print(" - %s (%s, %s, %s)" %(stu_list[stu].get("ID"), stu_list[stu].get("name"),
                                                          stu_list[stu].findtext("age"),
