@@ -163,6 +163,7 @@ def smart_mode() :
 
 print("<스마트 홈네트워크 시뮬레이션 프로그램 ver 1.0>")
 print("                             - 박규동 -")
+Step5_Weather_realtime_info_for_student.get_Realtime_Weather_Info()
 while True :
     print_main_menu()
     menu_num = int(input("메뉴를 선택하세요: "))
