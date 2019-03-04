@@ -15,7 +15,7 @@ def get_Request_URL (url) : # (1) 기상 정보 (동네예보정보 조회 서�
         print(" [%s] Error for URL : %s" % (datetime.datetime.now(), url))
         return None
 
-def get_Weather_URL (day_time) : # (1) 기상 정보 (똥네예보정보 조회 서비스) request 보내기 전, url 만드는 함수
+def get_Weather_URL (day_time) : # (1) 기상 정보 (돈네예보정보 조회 서비스) request 보내기 전, url 만드는 함수
     end_point = "http://newsky2.kma.go.kr/service/SecndSrtpdFrcstInfoService2/ForecastTimeData"
 
     parameters = "?_type=json&serviceKey=" + access_key
