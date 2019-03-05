@@ -1,7 +1,7 @@
 from Step5_Weather_realtime_info_for_student import get_Realtime_Weather_Info
 from Step5_dust_realtime_info_for_student import Make_Dust_Xml
 from selenium import webdriver
-import time, json, csv
+import time, json, csv, threading, ctypes
 
 g_Radiator = False # 난방기
 g_Gas_Valve = False # 가스밸브
@@ -24,6 +24,39 @@ presentDay = time.strftime('%d', time.localtime(time.time()))
 presentHour = time.strftime('%H', time.localtime(time.time()))
 presentMinute = time.strftime('%M', time.localtime(time.time()))
 presentSecond = time.strftime('%S', time.localtime(time.time()))
+
+with open("동구_신암동_초단기예보조회.json", 'r', encoding='UTF8') as json_file:
+    json_object = json.load(json_file)
+    json_string = json.dumps(json_object)
+    f_json = json.loads(json_string)
+
+def terminate_ai_mode () :
+    """Terminates a python thread from another thread.
+    :param thread: a threading.Thread instance
+    """
+    if not ai_scheduler.isAlive() :
+        return
+
+    exc = ctypes.py_object(SystemExit)
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(ai_scheduler.ident), exc)
+    if res == 0 :
+        raise ValueError("nonexistent thread id")
+    elif res > 1 :
+        # """if it returns a numbe greater than one, you're in trouble,
+        # and you should call it again with exc+NULL to revert the effect"""
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(ai_scheduler.ident, None)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+
+def update_scheduler () :
+    global g_Balcony_Windows
+    while True :
+        if g_AI_Mode == False :
+            continue
+        elif time.sleep(4) :
+            get_Realtime_Weather_Info()
+        else :
+            time.sleep(3) # 매 30분 마다
+            g_Balcony_Windows = not g_Balcony_Windows
 
 def purc_want_food (object_food) :
     search_url = "http://traders.ssg.com/search.ssg?target=all&query=%s&filterSiteNo=6002" %object_food
@@ -58,7 +91,7 @@ def use_and_update_ref() :
             if not lines: break
             line.append(lines)
         while True:
-            ingred_to_use = input("어떤 재료를 쓰겠습니까? (안하면 n) ")
+            ingred_to_use = input("어떤 재료를 사용하겠습니까? (안하면 n) ")
             if ingred_to_use == 'n': break
             for i in range(len(line)):
                 subject_name = line[i].split(',')[0]
@@ -90,16 +123,40 @@ def use_and_update_ref() :
                         break
 
 def add_ref () :
-    with open('ref_sub.csv', 'a', encoding='utf-8', newline='') as f_ref:
+    option_choice = int(input("1. 새로운 재고를 추가하겠습니까? 2. 원래 있던 재고 수를 변경하시겠습니까? "))
+    if option_choice == 1 :
+        with open('ref_sub.csv', 'a', encoding='utf-8', newline='') as f_ref:
+            while True :
+                add_name = input("품명을 적으세요. (n 하면 종료) ")
+                if add_name == 'n' : break
+                add_num = input("개수를 적으세요 (ex) 3개) ")
+                f_ref_writer = csv.writer(f_ref)
+                f_ref_writer.writerow([add_name, add_num])
+    elif option_choice == 2 :
+        line = []
+        with open('ref_sub.csv', 'r', encoding='utf-8', newline='') as f_ref:
+            while True:
+                lines = f_ref.readline().replace("\n", "")
+                if not lines: break
+                line.append(lines)
         while True :
-            add_name = input("품명을 적으세요. (n 하면 종료) ")
+            add_name = input("품명을 적으세요. (n하면 종료) ")
             if add_name == 'n' : break
-            add_num = input("개수를 적으세요 (ex) 3개) ")
-            f_ref_writer = csv.writer(f_ref)
-            f_ref_writer.writerow([add_name, add_num])
+            add_num = input("개수를 적으세요 (ex) 3) ")
+            for i in range(len(line)):
+                if line[i].split(',')[0] == add_name:
+                    line.append(add_name + ',' + str(add_num) + line[i].split(',')[1][
+                        len(line[i].split(',')[1]) - 2] + '\r')
+                    line.pop(i)
+                    break
+            with open('ref_sub.csv', 'w', encoding='utf-8', newline='') as f_ref:
+                for i in range(len(line)):
+                    f_ref_writer = csv.writer(f_ref)
+                    f_ref_writer.writerow([line[i].split(',')[0], line[i].split(',')[1].replace("\r", "")])
+                break
 
 def search_want_music (object_music) :
-    search_url = "https://www.melon.com/search/total/index.htm?q=%s&section=&linkOrText=T&ipath=srch_form" %object_music
+    search_url = "https://www.youtube.com/results?search_query=%s" %object_music
     driver = webdriver.Chrome('C:\chromedriver')
     driver.implicitly_wait(3)
     driver.get(search_url)
@@ -125,13 +182,6 @@ def cal_subway (f, sub_input) :
             print("설화명곡행 열차가 %s분 남았습니다." % str(int(list_minute.pop(0)) - int(presentMinute)))
         elif sub_input == 2 :
             print("안심행 열차가 %s분 남았습니다." % str(int(list_minute.pop(0)) - int(presentMinute)))
-
-def read_weather_info() :
-    with open("동구_신암동_초단기예보조회.json", encoding='UTF8') as json_file:
-        json_object = json.load(json_file)
-        json_string = json.dumps(json_object)
-        f_json = json.loads(json_string)
-    return f_json
 
 def print_main_menu() :
     print("\n1. 장비상태 확인")
@@ -186,7 +236,7 @@ def control_device() :
 
     check_device_status()
 
-def print_weather_info(f_json) :
+def print_weather_info() :
     global dust_grade
     print("현재 시각은 %s년 %s월 %s일 %s시 %s분 %s초 입니다." % (
         presentYear, presentMonth, presentDay, presentHour, presentMinute, presentSecond))
@@ -519,7 +569,7 @@ def ai_person_info() :
                     print("커튼이 치졌습니다.")
                     g_curtain = not g_curtain
 
-def ai_weather_info(f_json) :
+def ai_weather_info() :
     global g_Radiator, g_Balcony_Windows, g_curtain, g_speaker, g_ref
     global dust_grade, curtain_found
 
@@ -600,45 +650,47 @@ def ai_weather_info(f_json) :
 
 def smart_mode() :
     global g_AI_Mode
+    global ai_scheduler
 
-    print("1. 인공지능 모드 조회")
-    print("2. 인공지능 모드 상태 변경")
-    print("3. 실시간 기상정보 Update")
-    print("4. 실시간 기상정보 확인")
-    menu_num = int(input("메뉴를 선택하세요: "))
+    while True :
+        print("1. 인공지능 모드 조회")
+        print("2. 인공지능 모드 상태 변경")
+        print("3. 종료")
+        menu_num = int(input("메뉴를 선택하세요: "))
 
-    if menu_num == 1 : # 인공지능 모드 조회
-        print("현재 인공지능 모드: ", end='')
-        if g_AI_Mode == True: print("작동")
-        else : print("중지")
+        if menu_num == 1 : # 인공지능 모드 조회
+            print("현재 인공지능 모드: ", end='')
+            if g_AI_Mode == True: print("작동")
+            else : print("중지")
 
-    if menu_num == 2 : # 인공지능 모드 상태 변경
-        if g_AI_Mode == True :
-            print("현재 인공지능 모드가 작동하고 있습니다.")
-            print("중지하였습니다.")
+        if menu_num == 2 : # 인공지능 모드 상태 변경
+            g_AI_Mode = not g_AI_Mode
+            if g_AI_Mode == True :
+                print("인공지능 모드 작동")
+                ai_scheduler = threading.Thread(target=update_scheduler)
+                ai_scheduler.daemon = True
+                ai_scheduler.start()
+            else :
+                while ai_scheduler.is_alive() :
+                    try :
+                        terminate_ai_mode()
+                    except :
+                        pass
+                print("인공지능 모드 정지")
         else :
-            print("현재 인공지능 모드가 작동하고 있지 않습니다.")
-            print("작동하겠습니다.")
-        g_AI_Mode = not g_AI_Mode
-
-    elif menu_num == 3 : # 실시간 기상정보 Update
-        get_Realtime_Weather_Info()
-
-    elif menu_num == 4 : # 실시간 기상정보 확인
-        print_weather_info(read_weather_info())
+            break
 
 def do_behavior(behavior) :
     global g_AI_Mode
 
     if behavior == 1 : # 기상 - 기상했을 때 자동적으로 업데이트
         get_Realtime_Weather_Info()
-        print_weather_info(read_weather_info())
-        ai_weather_info(read_weather_info())
+        print_weather_info()
+        ai_weather_info()
 
     elif behavior == 2 : # 출근/외출
         get_Realtime_Weather_Info()
-        print_weather_info(read_weather_info())
-        ai_weather_info(read_weather_info())
+        print_weather_info()
 
         look_sub_time = input("동구청 지하철 시간표를 확인하시겠습니까? (y or n) ")
         if (look_sub_time == 'y'):
@@ -675,14 +727,13 @@ def do_behavior(behavior) :
         pass
     elif behavior == 9 : # 수면
         get_Realtime_Weather_Info()
-        print_weather_info(read_weather_info())
-        ai_weather_info(read_weather_info())
+        print_weather_info()
+        ai_weather_info()
 
     ai_person_info()
 
 print("<스마트 홈네트워크 시뮬레이션 프로그램 ver 1.0>")
 print("                             - 박규동 -")
-
 
 while True :
     print_main_menu()
