@@ -1,7 +1,7 @@
 from Step5_Weather_realtime_info_for_student import get_Realtime_Weather_Info
+from Step5_dust_realtime_info_for_student import Make_Dust_Xml
 from selenium import webdriver
-from collections import Counter
-import time, json, random, csv
+import time, json, csv
 
 g_Radiator = False # 난방기
 g_Gas_Valve = False # 가스밸브
@@ -13,12 +13,10 @@ g_speaker = False # 스피커
 g_pad = False # 패드
 g_ref = False # 냉장고
 
-# 주광색 : 일반 사무실에서 많이 사용되는 색으로 선명하고 차가운 느낌의 백색을 가진 색 (5,701K ~ 7,100K)
-# 주백색 : 거실에서 많이 사용하는 색상으로 청색광이 빠져 백색이면서도 차가운 느낌이 없다. (4,501K ~ 5,700K)
-# 온백색 : 고급스러우면서 은은한 색상으로 눈이 가장 편하게 느끼는 색상 (3,001K ~ 4,500K)
-# 전구색 : 백열전구의 느낌이 나는 색상으로 따뜻하면서 분위기와 편안함을 느낄 수 있습니다. (2,700K ~ 3,000K)
-
 g_AI_Mode = False
+
+curtain_found = False
+dust_grade = 0
 
 presentYear = time.strftime('%Y', time.localtime(time.time()))
 presentMonth = time.strftime('%m', time.localtime(time.time()))
@@ -26,6 +24,12 @@ presentDay = time.strftime('%d', time.localtime(time.time()))
 presentHour = time.strftime('%H', time.localtime(time.time()))
 presentMinute = time.strftime('%M', time.localtime(time.time()))
 presentSecond = time.strftime('%S', time.localtime(time.time()))
+
+def purc_want_food (object_food) :
+    search_url = "http://traders.ssg.com/search.ssg?target=all&query=%s&filterSiteNo=6002" %object_food
+    driver = webdriver.Chrome('C:\chromedriver')
+    driver.implicitly_wait(3)
+    driver.get(search_url)
 
 def read_ref() :
     with open('ref_sub.csv', 'r', encoding='utf-8') as f_ref:
@@ -63,35 +67,36 @@ def use_and_update_ref() :
                     num_to_now = int(subject_num[:len(subject_num) - 2])  # 현재 냉장고에 있는 재료 수
                     num_to_want = int(input("몇 %s 쓰겠습니까? " % subject_num[len(subject_num) - 2]))  # 쓰고 싶은 재료 수
                     if num_to_want > num_to_now:
-                        print("현재 냉장고에 있는 수 보다 많습니다. 다시 선택해주세요.")
-                        break
+                        purc_conf = input("현재 냉장고에 있는 수 보다 많습니다. 주문하시겠습니까? (y or n) ")
+                        if purc_conf == 'y' :
+                            purc_want_food(subject_name)
+                        else :
+                            break
                     num_to_left = num_to_now - num_to_want  # 남는 재료 수
-                    with open('ref_sub.csv', 'r', encoding='utf-8', newline='') as f_ref_2:
-                        while True:
-                            lines = f_ref_2.readline().replace("\n", "")
-                            if not lines: break
-                            if lines.split(',')[0] == subject_name:
-                                lines.replace(lines.split(',')[1][:len(lines.split(',')[1]) - 2], str(num_to_left))
-                                print(lines)
-                                break
+                    if num_to_left == 0 :
+                        purc_obj = input("%s 재고가 0입니다. 주문하시겠습니까?" %subject_name)
+                        if purc_obj == 'y' :
+                            purc_want_food(subject_name)
+                    for i in range(len(line)):
+                        if line[i].split(',')[0] == subject_name:
+                            line.append(subject_name + ',' + str(num_to_left) + line[i].split(',')[1][
+                                len(line[i].split(',')[1]) - 2] + '\r')
+                            line.pop(i)
+                            break
+                    with open('ref_sub.csv', 'w', encoding='utf-8', newline='') as f_ref:
+                        for i in range(len(line)):
+                            f_ref_writer = csv.writer(f_ref)
+                            f_ref_writer.writerow([line[i].split(',')[0], line[i].split(',')[1].replace("\r", "")])
+                        break
+
 def add_ref () :
-    while True :
-       add_input = input("추가 하시겠습니까? 재고 수정하시겠습니까? 1. 재고 추가 2. 재고 수정 ")
-       if add_input == 1 :
-           with open('ref_sub.csv', 'a', encoding='utf-8', newline='') as f_ref:
-                add_name = input("품명을 적으세요. (n 하면 종료) ")
-                add_num = input("개수를 적으세요 (ex) 3개) ")
-                f_ref_writer = csv.writer(f_ref)
-                f_ref_writer.writerow([add_name, add_num])
-       elif add_input == 2 :
-           with open('ref_sub.csv', 'r', encoding='utf-8', newline='') as f_ref:
-               add_name = input("재고 수정할 품명을 적어주세요. ")
-               add_num = input("개수를 적으세요 (ex) 3개) ")
-               while True:
-                   lines = f_ref.readline().replace("\n", "")
-                   if not lines: break
-                   if lines.split(',')[0] == add_name:
-                       lines.replace(lines.split(',')[1][:len(lines.split(',')[1])], add_num)
+    with open('ref_sub.csv', 'a', encoding='utf-8', newline='') as f_ref:
+        while True :
+            add_name = input("품명을 적으세요. (n 하면 종료) ")
+            if add_name == 'n' : break
+            add_num = input("개수를 적으세요 (ex) 3개) ")
+            f_ref_writer = csv.writer(f_ref)
+            f_ref_writer.writerow([add_name, add_num])
 
 def search_want_music (object_music) :
     search_url = "https://www.melon.com/search/total/index.htm?q=%s&section=&linkOrText=T&ipath=srch_form" %object_music
@@ -99,7 +104,7 @@ def search_want_music (object_music) :
     driver.implicitly_wait(3)
     driver.get(search_url)
 
-def cal_subway (fm, sub_input) :
+def cal_subway (f, sub_input) :
     list_minute = []
     lines = csv.reader(f)
     for line in lines:
@@ -182,7 +187,8 @@ def control_device() :
     check_device_status()
 
 def print_weather_info(f_json) :
-    print("\n현재 시각은 %s년 %s월 %s일 %s시 %s분 %s초 입니다." % (
+    global dust_grade
+    print("현재 시각은 %s년 %s월 %s일 %s시 %s분 %s초 입니다." % (
         presentYear, presentMonth, presentDay, presentHour, presentMinute, presentSecond))
 
     len_f = len(f_json)
@@ -210,9 +216,20 @@ def print_weather_info(f_json) :
                 elif precipitation == 2 : pre_form = "비와 눈"
                 elif precipitation == 3 : pre_form = "눈"
                 print("%s시 강수형태는 %s 일 것으로 예상됩니다." % (presentHour_int + 1, pre_form))
+    dust_grade = int(Make_Dust_Xml())
+    if dust_grade == 1:
+        print("현재 대기오염 상태는 좋습니다.")
+    elif dust_grade == 2:
+        print("현재 대기오염 상태는 보통입니다. ")
+    elif dust_grade == 3:
+        print("현재 대기오염 상태는 나쁨입니다. ")
+    elif dust_grade == 4:
+        print("현재 대기오염 상태는 아주나쁨입니다. ")
+    print(" ")
 
 def ai_person_info() :
     global g_Gas_Valve, g_Door, g_lamp, g_speaker, g_ref, g_curtain
+    global curtain_found
 
     if behavior == 1 : # 기상
         if g_lamp == True :
@@ -251,17 +268,18 @@ def ai_person_info() :
                     if music_input == 'y' :
                         music_input_input = input("듣고싶은 음악을 적어주세요.(실제로는 불러주세요) ")
                         search_want_music(music_input_input)
-        if g_curtain == False :
-            curtain_input = input("커튼을 펼치겠습니까? (y or n) ")
-            if curtain_input == 'y' :
-                print("커튼이 펼쳐졌습니다.")
-                g_curtain = not g_curtain
-        elif g_curtain == True :
-            curtain_input = input("커튼을 치겠습니까? (y or n) ")
-            if curtain_input == 'y':
-                print("커튼이 쳐졌습니다.")
-                g_curtain = not g_curtain
-    elif behavior == 2  : # 외출
+        if curtain_found == False :
+            if g_curtain == False :
+                curtain_input = input("커튼을 펼치겠습니까? (y or n) ")
+                if curtain_input == 'y' :
+                    print("커튼이 펼쳐졌습니다.")
+                    g_curtain = not g_curtain
+            elif g_curtain == True :
+                curtain_input = input("커튼을 치겠습니까? (y or n) ")
+                if curtain_input == 'y':
+                    print("커튼이 쳐졌습니다.")
+                    g_curtain = not g_curtain
+    elif behavior == 2  : # 출근/외출
         if g_Gas_Valve == True :
             print("현재 외출중입니다. 하지만 가스밸브가 열어져 있습니다. 잠그겠습니다.")
             g_Gas_Valve = not g_Gas_Valve
@@ -274,11 +292,12 @@ def ai_person_info() :
         if g_speaker == True :
             print("현재 외출중입니다. 하지만 스피커는 커져 있습니다. 끄겠습니다.")
             g_speaker = not g_speaker
-        if g_curtain == True :
-            curtain_input = input("커튼을 치겠습니까? (y or n) ")
-            if curtain_input == 'y':
-                print("커튼이 치졌습니다.")
-                g_curtain = not g_curtain
+        if curtain_found == False:
+            if g_curtain == True :
+                curtain_input = input("커튼을 치겠습니까? (y or n) ")
+                if curtain_input == 'y':
+                    print("커튼이 치졌습니다.")
+                    g_curtain = not g_curtain
     elif behavior == 3 : # 귀가
         if g_lamp == True:
             lamp_input = input("조명이 켜져 있습니다. 조명을 끄겠습니까? (y or n) ")
@@ -324,16 +343,17 @@ def ai_person_info() :
                     if music_input == 'y':
                         music_input_input = input("어떤 음악을 듣고 싶은지 적어주세요(실제로는 불러주세요) ")
                         search_want_music(music_input_input)
-        if g_curtain == False:
-            curtain_input = input("커튼을 펼치겠습니까? (y or n) ")
-            if curtain_input == 'y':
-                print("커튼이 펼쳐졌습니다.")
-                g_curtain = not g_curtain
-        elif g_curtain == True:
-            curtain_input = input("커튼을 치겠습니까? (y or n) ")
-            if curtain_input == 'y':
-                print("커튼이 쳐졌습니다.")
-                g_curtain = not g_curtain
+        if curtain_found == False:
+            if g_curtain == False:
+                curtain_input = input("커튼을 펼치겠습니까? (y or n) ")
+                if curtain_input == 'y':
+                    print("커튼이 펼쳐졌습니다.")
+                    g_curtain = not g_curtain
+            elif g_curtain == True:
+                curtain_input = input("커튼을 치겠습니까? (y or n) ")
+                if curtain_input == 'y':
+                    print("커튼이 쳐졌습니다.")
+                    g_curtain = not g_curtain
     elif behavior == 4 : # 식사
         if g_lamp == True:
             lamp_input = input("조명이 켜져 있습니다. 조명을 끄겠습니까? (y or n) ")
@@ -371,32 +391,137 @@ def ai_person_info() :
                     if music_input == 'y':
                         music_input_input = input("어떤 음악을 듣고 싶은지 적어주세요(실제로는 불러주세요) ")
                         search_want_music(music_input_input)
-        if g_curtain == False:
-            curtain_input = input("커튼을 펼치겠습니까? (y or n) ")
-            if curtain_input == 'y':
-                print("커튼이 펼쳐졌습니다.")
-                g_curtain = not g_curtain
-        elif g_curtain == True:
-            curtain_input = input("커튼을 치겠습니까? (y or n) ")
-            if curtain_input == 'y':
-                print("커튼이 쳐졌습니다.")
-                g_curtain = not g_curtain
+        if curtain_found == False:
+            if g_curtain == False:
+                curtain_input = input("커튼을 펼치겠습니까? (y or n) ")
+                if curtain_input == 'y':
+                    print("커튼이 펼쳐졌습니다.")
+                    g_curtain = not g_curtain
+            elif g_curtain == True:
+                curtain_input = input("커튼을 치겠습니까? (y or n) ")
+                if curtain_input == 'y':
+                    print("커튼이 쳐졌습니다.")
+                    g_curtain = not g_curtain
 
     elif behavior == 5 : # 목욕
-        pass
+        if g_speaker == False :
+            speaker_input_false = input("스피커를 키겠습니까? (y or n) ")
+            if speaker_input_false == 'y' :
+                print("스피커가 켜졌습니다.")
+                g_speaker = not g_speaker
+                music_input = input("목욕하기에 듣기 좋은 음악을 트시겠습니까? (y or n) ")
+                if music_input == 'y':
+                    search_want_music("목욕하기에 듣기 좋은 음악")
+                else:
+                    music_input = input("다른 음악을 트시겠습니까? (y or n) ")
+                    if music_input == 'y':
+                        music_input_input = input("듣고싶은 음악을 적어주세요.(실제로는 불러주세요) ")
+                        search_want_music(music_input_input)
+        elif g_speaker == True :
+            speaker_input_true = input("스피커가 켜져 있습니다. 스피커를 끄겠습니까? (y or n) ")
+            if speaker_input_true == 'y' :
+                print("스피커를 끄겠습니다.")
+                g_speaker = not g_speaker
+            else :
+                music_input = input("목욕하기에 듣기 좋은 음악을 트시겠습니까? (y or n) ")
+                if music_input == 'y' :
+                    search_want_music("목욕하기에 듣기 좋은 음악")
+                else :
+                    music_input = input("다른 음악을 트시겠습니까? (y or n) ")
+                    if music_input == 'y' :
+                        music_input_input = input("듣고싶은 음악을 적어주세요.(실제로는 불러주세요) ")
+                        search_want_music(music_input_input)
     elif behavior == 6 : # TV 보기
         pass
     elif behavior == 7 : # 음악
-        pass
+        if g_speaker == False :
+            speaker_input_false = input("스피커를 키겠습니까? (y or n) ")
+            if speaker_input_false == 'y' :
+                print("스피커가 켜졌습니다.")
+                g_speaker = not g_speaker
+                music_input_input = input("듣고싶은 음악을 적어주세요.(실제로는 불러주세요) ")
+                search_want_music(music_input_input)
+        elif g_speaker == True :
+            speaker_input_true = input("스피커가 켜져 있습니다. 스피커를 끄겠습니까? (y or n) ")
+            if speaker_input_true == 'y' :
+                print("스피커를 끄겠습니다.")
+                g_speaker = not g_speaker
+            else :
+                music_input_input = input("듣고싶은 음악을 적어주세요.(실제로는 불러주세요) ")
+                search_want_music(music_input_input)
     elif behavior == 8 : # 독서
-        pass
-    elif behavior == 8 : # 수면
-        if g_lamp == True :
-            print("조명이 꺼졌습니다.")
-            g_lamp = not g_lamp
+        if g_lamp == True:
+            lamp_input = input("조명이 켜져 있습니다. 조명을 끄겠습니까? (y or n) ")
+            if lamp_input == 'y':
+                g_lamp = not g_lamp
+        elif g_lamp == False:
+            lamp_input = input("조명을 켜겠습니까? (y or n) ")
+            if lamp_input == 'y':
+                print("조명이 켜졌습니다.")
+                g_lamp = not g_lamp
+        if g_speaker == False :
+            speaker_input_false = input("스피커를 키겠습니까? (y or n) ")
+            if speaker_input_false == 'y' :
+                print("스피커가 켜졌습니다.")
+                g_speaker = not g_speaker
+                music_input = input("독서하기에 듣기 좋은 음악을 트시겠습니까? (y or n) ")
+                if music_input == 'y':
+                    search_want_music("독서하기에 듣기 좋은 음악")
+                else:
+                    music_input = input(
+                        "다른 음악을 트시겠습니까? (y or n) ")
+                    if music_input == 'y':
+                        music_input_input = input("듣고싶은 음악을 적어주세요.(실제로는 불러주세요) ")
+                        search_want_music(music_input_input)
+        elif g_speaker == True :
+            speaker_input_true = input("스피커가 켜져 있습니다. 스피커를 끄겠습니까? (y or n) ")
+            if speaker_input_true == 'y' :
+                print("스피커를 끄겠습니다.")
+                g_speaker = not g_speaker
+            else :
+                music_input = input("독서하기에 듣기 좋은 음악을 트시겠습니까? (y or n) ")
+                if music_input == 'y' :
+                    search_want_music("독서하기에 듣기 좋은 음악")
+                else :
+                    music_input = input("다른 음악을 트시겠습니까? (y or n) ")
+                    if music_input == 'y' :
+                        music_input_input = input("듣고싶은 음악을 적어주세요.(실제로는 불러주세요) ")
+                        search_want_music(music_input_input)
+        if curtain_found == False:
+            if g_curtain == False :
+                curtain_input = input("커튼을 펼치겠습니까? (y or n) ")
+                if curtain_input == 'y' :
+                    print("커튼이 펼쳐졌습니다.")
+                    g_curtain = not g_curtain
+            elif g_curtain == True :
+                curtain_input = input("커튼을 치겠습니까? (y or n) ")
+                if curtain_input == 'y':
+                    print("커튼이 쳐졌습니다.")
+                    g_curtain = not g_curtain
+
+    elif behavior == 9 : # 수면
+        if g_Gas_Valve == True:
+            print("가스벨브를 잠갔습니다.")
+            g_Gas_Valve = not g_Gas_Valve
+        if g_Door == True:
+            print("현관문을 잠갔습니다.")
+            g_Door = not g_Door
+        if g_lamp == True:
+            print("조명을 껐습니다.")
+            g_lamp = not g_Door
+        if g_speaker == True:
+            print("스피커를 껐습니다.")
+            g_speaker = not g_speaker
+        if curtain_found == False:
+            if g_curtain == True:
+                curtain_input = input("커튼을 치겠습니까? (y or n) ")
+                if curtain_input == 'y':
+                    print("커튼이 치졌습니다.")
+                    g_curtain = not g_curtain
 
 def ai_weather_info(f_json) :
     global g_Radiator, g_Balcony_Windows, g_curtain, g_speaker, g_ref
+    global dust_grade, curtain_found
 
     len_f = len(f_json)
     presentHour_int = int(presentHour)
@@ -422,14 +547,24 @@ def ai_weather_info(f_json) :
                     if moi <= 30 :
                         accept = input("현재 창문이 닫혀 있습니다. 현재 습도가 30% 이하이므로 창문을 열어도 괜찮겠습니까? (y or n) ")
                         if accept == 'y':
-                            g_Balcony_Windows = not g_Balcony_Windows
-                            print("창문을 열었습니다.")
+                            if dust_grade >= 3 :
+                                dust_accept = input("하지만 미세먼지가 하늘에 많습니다. 그래도 창문을 열겠습니까? (y or n) ")
+                                if dust_accept == 'y' :
+                                    g_Balcony_Windows = not g_Balcony_Windows
+                                    print("창문을 열었습니다.")
+
                 else :
                     if moi >= 60 :
                         accept = input("현재 창문이 열어져 있습니다. 현재 습도가 60% 이하이므로 창문을 닫아도 괜찮겠습니까? (y or n) ")
                         if accept == 'y':
                             g_Balcony_Windows = not g_Balcony_Windows
                             print("창문을 닫았습니다.")
+                        else :
+                            if dust_grade >= 3 :
+                                dust_accept = input("하지만 미세먼지가 하늘에 많습니다. 그래도 창문을 열겠습니까? (y or n) ")
+                                if dust_accept == 'y' :
+                                    g_Balcony_Windows = not g_Balcony_Windows
+                                    print("창문을 열었습니다.")
 
             if f_json[i]["category"] == "PTY": # 강수형태
                 precipitation = f_json[i]["fcstValue"]
@@ -439,14 +574,29 @@ def ai_weather_info(f_json) :
                         if accept == 'y':
                             g_Balcony_Windows = not g_Balcony_Windows
                             print("창문을 닫았습니다.")
+                        else :
+                            if dust_grade >= 3 :
+                                dust_accept = input("하지만 미세먼지가 하늘에 많습니다. 그래도 창문을 열겠습니까? (y or n) ")
+                                if dust_accept == 'y' :
+                                    g_Balcony_Windows = not g_Balcony_Windows
+                                    print("창문을 열었습니다.")
             if f_json[i]["category"] == "SKY": # 하늘상태
                 cloud = f_json[i]["fcstValue"]
                 if 0 <= cloud <= 2 :
                     if g_curtain == False :
+                        curtain_found = True
                         accept = input("현재 커튼이 닫혀져 있습니다. 현재 맑으므로 커튼을 쳐도 괜찮겠습니까? (y or n) ")
                         if accept == "y" :
                             g_curtain = not g_curtain
                             print("커튼을 쳤습니다.")
+                    if g_Balcony_Windows == False :
+                        accept = input("날씨가 좋습니다. 창문을 열겠습니까? (y or n) ")
+                        if accept == 'y' :
+                            if dust_grade >= 3 :
+                                dust_accept = input("하지만 미세먼지가 많습니다. 그래도 열겠습니까? (y or n) ")
+                                if dust_accept == 'y' :
+                                    g_Balcony_Windows = not g_Balcony_Windows
+                                    print("창문을 열었습니다.")
 
 def smart_mode() :
     global g_AI_Mode
@@ -481,9 +631,15 @@ def do_behavior(behavior) :
     global g_AI_Mode
 
     if behavior == 1 : # 기상 - 기상했을 때 자동적으로 업데이트
-        pass
+        get_Realtime_Weather_Info()
+        print_weather_info(read_weather_info())
+        ai_weather_info(read_weather_info())
 
     elif behavior == 2 : # 출근/외출
+        get_Realtime_Weather_Info()
+        print_weather_info(read_weather_info())
+        ai_weather_info(read_weather_info())
+
         look_sub_time = input("동구청 지하철 시간표를 확인하시겠습니까? (y or n) ")
         if (look_sub_time == 'y'):
             sub_input = int(input("1. 설화명곡행 2. 안심행 (1 or 2) "))
@@ -518,10 +674,10 @@ def do_behavior(behavior) :
     elif behavior == 8 : # 독서
         pass
     elif behavior == 9 : # 수면
-        pass
+        get_Realtime_Weather_Info()
+        print_weather_info(read_weather_info())
+        ai_weather_info(read_weather_info())
 
-    get_Realtime_Weather_Info()
-    ai_weather_info(read_weather_info())
     ai_person_info()
 
 print("<스마트 홈네트워크 시뮬레이션 프로그램 ver 1.0>")
