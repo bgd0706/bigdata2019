@@ -2,7 +2,7 @@ import urllib.request, datetime, json, time
 
 access_key = "XtvjsQxlsgO41hz7VcZ3PmLekszkSNs2bpmvNTR%2Fn3VJ9uy6sI3jd%2B8RmLgU3vI5%2FpTae%2BoYpWSP4MKtixEHAw%3D%3D"
 
-def get_Request_URL (url) : # (1) 기상 정보 (동네예보정보 조회 서비스) / (2) 통합대기환경 정보(대기오염정보 조회 서비스)
+def get_Request_URL (url) : # (1) 기상 정보 (동네예보정보 조회 서비스) / (1. CSV) 통합대기환경 정보(대기오염정보 조회 서비스)
 
     req = urllib.request.Request(url)
 

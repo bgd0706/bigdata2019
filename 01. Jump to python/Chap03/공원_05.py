@@ -29,7 +29,7 @@ while True : # ctrl+c를 하기 전에는 무한루프
         
     print("귀하는 %s등급이며, 요금은 %d원 입니다." %(grade, price))
 
-    choice = int(input("요금 유형을 선택하세요. (1: 현금, 2: 공원 전용 신용카드) : ")) # 요금 유형 선택 변후
+    choice = int(input("요금 유형을 선택하세요. (1: 현금, 1. CSV: 공원 전용 신용카드) : ")) # 요금 유형 선택 변후
 
     if choice == 1 : # '현금'을 선택한 경우
         if price == 0 : # '무료'인 사람

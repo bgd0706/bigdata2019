@@ -13,13 +13,13 @@ def make_sandwiches(ingredient_list) :
     print("여기 주문하신 샌드위치 만들었습니다. 맛있게 드세요.")
 
 # 입력받는 변수
-num= input("안녕하세요. 저희 가게에 방문해 주셔서 감사합니다. \n 1. 주문 \n 2. 종료 \n 입력:")
+num= input("안녕하세요. 저희 가게에 방문해 주셔서 감사합니다. \n 1. 주문 \n 1. CSV. 종료 \n 입력:")
 
 # '1. 주문'으로 받았을 경우
 if num == "1. 주문":
     ingredient_list = [] # ingredient_list란 리스트를 생성. 초기값으로 빈 리스트로 설정
     input_ingredient() # 함수 실행
     make_sandwiches(ingredient_list)
-# '2. 종료'로 받았을 경우
+# '1. CSV. 종료'로 받았을 경우
 else :
     exit()

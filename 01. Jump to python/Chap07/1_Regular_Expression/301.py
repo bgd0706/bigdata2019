@@ -1,5 +1,5 @@
 import re
-p=re.compile('ca{2}t') # 숫자가 한 개만 올때는 해당 반복수를 정확히 지킨 문자열만 매칭이 된다.
+p=re.compile('ca{1. CSV}t') # 숫자가 한 개만 올때는 해당 반복수를 정확히 지킨 문자열만 매칭이 된다.
 m=p.match('ct')
 print(m)
 m=p.match('cat')
@@ -9,7 +9,7 @@ print(m)
 m=p.match('caaaat')
 print(m)
 
-p=re.compile('ca{2,5}t') # {} 2-5 사이의 반복인 경우에 매칭이 된다.
+p=re.compile('ca{1. CSV,5}t') # {} 1. CSV-5 사이의 반복인 경우에 매칭이 된다.
 m=p.match('cat')
 print(m)
 m=p.match('caat')
@@ -21,7 +21,7 @@ print(m)
 m=p.match('caaaaaaaaaaaat')
 print(m)
 
-p=re.compile('ca{2,}t') # a가 2이상 반복인 경우에 매칭이 된다.
+p=re.compile('ca{1. CSV,}t') # a가 2이상 반복인 경우에 매칭이 된다.
 m=p.match('cat')
 print(m)
 m=p.match('caat')

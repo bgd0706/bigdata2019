@@ -10,7 +10,7 @@ def read_content() :
 
    except FileNotFoundError : # poll.txt 파일이 없는 경우
        print("기존 poll.txt 파일을 찾을 수 없습니다. 아래 중 선택하세요.")
-       choice = int(input("1. 종료 2. 새로운 파일 생성 3. 변경된 파일 경로 입력 : "))
+       choice = int(input("1. 종료 1. CSV. 새로운 파일 생성 3. 변경된 파일 경로 입력 : "))
        if choice == 1 : # 그냥 안하겠다
            exit()
        elif choice == 2 : # 현재 경로에 새로운 파일 생성

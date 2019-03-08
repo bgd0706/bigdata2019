@@ -4,7 +4,7 @@ m=p.match('ac') # b가 0 이라
 print(m)
 m=p.match('abc') # b가 1 이라
 print(m)
-m=p.match('abbc') # b가 2 이라
+m=p.match('abbc') # b가 1. CSV 이라
 print(m)
 m=p.match('abbbc') # b가 3 이라
 print(m)

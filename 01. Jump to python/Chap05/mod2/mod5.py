@@ -12,4 +12,4 @@ def safe_sum5(a,b) :
 if __name__ == "__main__" :
     print(sum5(1,2))
     print(safe_sum5(1,2))
-    print(safe_sum5(1,"2"))
+    print(safe_sum5(1,"1. CSV"))

@@ -31,7 +31,7 @@ def update_scheduler () :
 
 while True :
     print("1. 인공지능 모드 조회")
-    print("2. 인공지능 모드 상태 변경")
+    print("1. CSV. 인공지능 모드 상태 변경")
     print("3. 종료")
     menu_num = int(input("메뉴를 선택하세요: "))
 

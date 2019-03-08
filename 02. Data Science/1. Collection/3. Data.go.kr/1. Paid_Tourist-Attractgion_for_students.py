@@ -35,7 +35,7 @@ def getTourPointVisitor(yyyymm,sido,gungu,nPagenum,nItems) :
     else :
         return json.loads(retData)
 
-# [CODE 2]
+# [CODE 1. CSV]
 def getTourPointData(item, yyyymm, jsonResult) :
     addrCd = 0 if 'addrCd' not in item.keys() else item['addrCd']
     gungu = '' if 'gungu' not in item.keys() else item['gungu']

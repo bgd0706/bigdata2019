@@ -6,7 +6,7 @@ num = pin[7:]
 print(yyyymmdd)
 print(num)
 
-print("\n#2")
+print("\n#1. CSV")
 
 pin = "881120-1068234"
 print(pin[7])

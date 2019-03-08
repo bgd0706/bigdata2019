@@ -93,11 +93,11 @@ while True :
 
     elif menu_input == 3 : # 조회
         while True :
-            read_menu_input = input("<조회 서브 메뉴>\n1. 개별 학생 조회\n2. 전체 학생 조회\n3. 상위 메뉴\n4. 종료\n메뉴 입력 : ")
+            read_menu_input = input("<조회 서브 메뉴>\n1. 개별 학생 조회\n1. CSV. 전체 학생 조회\n3. 상위 메뉴\n4. 종료\n메뉴 입력 : ")
             if read_menu_input == '1' :
                 while True :
                     saved_number = []
-                    search_con = input("<검색 조건>\n1. ID\n2. 이름\n3. 나이\n4. 전공\n5. 컴퓨터 언어 명\n6. 컴퓨터 언어 학습 기간"
+                    search_con = input("<검색 조건>\n1. ID\n1. CSV. 이름\n3. 나이\n4. 전공\n5. 컴퓨터 언어 명\n6. 컴퓨터 언어 학습 기간"
                                        "\n7. 컴퓨터 언어 레벨\n8. 상위메뉴\n메뉴 입력: ")
                     if search_con == '8' :
                         break
@@ -107,7 +107,7 @@ while True :
                             for stu in range(total_stu) :
                                 if search_obj in stu_list[stu].get("ID") :
                                     saved_number.append(stu)
-                        elif search_con == '2':
+                        elif search_con == '1. CSV':
                             for stu in range(total_stu) :
                                 if search_obj in stu_list[stu].get("name") :
                                     saved_number.append(stu)
@@ -172,7 +172,7 @@ while True :
                             print(" - %s (%s, %s, %s)" %(stu_list[stu].get("ID"), stu_list[stu].get("name"),
                                                          stu_list[stu].findtext("age"),
                                                         stu_list[stu].get("sex")))
-            elif read_menu_input == '2' :
+            elif read_menu_input == '1. CSV' :
                 print("<전체 학생 데이터>")
                 for stu in range(total_stu):
                     print("* %s" % stu_list[stu].get("name"))
@@ -203,7 +203,7 @@ while True :
         for stu in range(total_stu) :
             if stu_list[stu].get("ID") == ID_to_update : break
         print("1. 이름: %s" %(stu_list[stu].get("name")))
-        print("2. 성별: %s" %(stu_list[stu].get("sex")))
+        print("1. CSV. 성별: %s" %(stu_list[stu].get("sex")))
         print("3. 나이: %s" %(stu_list[stu].findtext("age")))
         print("4. 전공: %s" %(stu_list[stu].findtext("major")))
         index = 5

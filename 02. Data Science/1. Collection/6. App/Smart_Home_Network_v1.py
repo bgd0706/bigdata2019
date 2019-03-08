@@ -1,6 +1,8 @@
 from Step5_Weather_realtime_info_for_student import get_Realtime_Weather_Info
 from Step5_dust_realtime_info_for_student import Make_Dust_Xml
+from mk_news import main
 from selenium import webdriver
+import pandas as pd
 import time, json, csv, threading, ctypes
 
 g_Radiator = False # 난방기
@@ -30,6 +32,34 @@ with open("동구_신암동_초단기예보조회.json", 'r', encoding='UTF8') a
     json_string = json.dumps(json_object)
     f_json = json.loads(json_string)
 
+ref_data = pd.read_csv("ref_sub.csv")
+list_name = list(ref_data.loc[:, 'name'])
+list_quan = list(ref_data.loc[:, 'quanity'])
+
+def read_news () :
+    with open("mk_news_title.csv", 'r', encoding='utf-8') as n_file:
+        index = 1
+        while True:
+            line = n_file.readline().replace("\n", "")
+            if not line: break
+            print("%s. %s" % (index, line.split(',!,')[0]))
+            index += 1
+
+def want_news () :
+    while True  :
+        want_num = int(input("보고싶은 뉴스의 번호를 적어주세요. (그만 보고 싶으면 0) "))
+        if want_num == 0 : break
+        with open("mk_news_title.csv", 'r', encoding='utf-8') as n_file:
+            index = 1
+            while True:
+                line = n_file.readline().replace("\n", "")
+                if not line: break
+                if want_num == index :
+                    driver = webdriver.Chrome('C:\chromedriver')
+                    driver.implicitly_wait(3)
+                    driver.get(line.split(',!,')[1])
+                index += 1
+
 def terminate_ai_mode () :
     """Terminates a python thread from another thread.
     :param thread: a threading.Thread instance
@@ -52,10 +82,11 @@ def update_scheduler () :
     while True :
         if g_AI_Mode == False :
             continue
-        elif time.sleep(4) :
-            get_Realtime_Weather_Info()
+        # elif presentMinute == '57' and presentSecond == '30' :
+        #     time.sleep(3)
+        #     get_Realtime_Weather_Info()
         else :
-            time.sleep(3) # 매 30분 마다
+            time.sleep(1800) # 매 30분 마다
             g_Balcony_Windows = not g_Balcony_Windows
 
 def purc_want_food (object_food) :
@@ -65,95 +96,94 @@ def purc_want_food (object_food) :
     driver.get(search_url)
 
 def read_ref() :
-    with open('ref_sub.csv', 'r', encoding='utf-8') as f_ref:
-        while True :
-            line = f_ref.readline().replace("\n","")
-            if not line : break
-            print("%s (이/가) %s 있습니다." %(line.split(',')[0], line.split(',')[1][:len(line.split(',')[1])]))
+    global ref_data
+    for i in range(len(ref_data)):
+        print("%s. %s (이/가) %s 있습니다." % (i + 1, list_name[i], list_quan[i]))
 
 def make_food_ref () :
-    with open('ref_sub.csv', 'r', encoding='utf-8') as f_ref:
-        while True :
-            line = f_ref.readline().replace("\n","")
-            if not line : break
-            print("%s (이/가) %s 있습니다." %(line.split(' ')[0], line.split(' ')[1]))
-    search_url = "http://home.ebs.co.kr/cook/board/4/500514/list?bbsId=500514&boardType=2&iframeOn=false&searchCondition=pstCntnSrch&" \
-                 "searchKeyword=%s&searchKeywordCondition=1" % line.split(' ')[0]
-    driver = webdriver.Chrome('C:\chromedriver')
-    driver.implicitly_wait(3)
-    driver.get(search_url)
+    global ref_data
+    while True :
+        make_num = int(input("어떤 재료 레시피를 보시겠습니까? (그만 보고 싶으면 0) (ex) 3) "))
+        if make_num == 0: break
+        i = 0
+        while True:
+            if make_num - 1 == i:
+                search_url = "http://home.ebs.co.kr/cook/board/4/500514/list?bbsId=500514&boardType=2&iframeOn=false&searchCondition=pstCntnSrch&" \
+                             "searchKeyword=%s&searchKeywordCondition=1" % list_name[i]
+                driver = webdriver.Chrome('C:\chromedriver')
+                driver.implicitly_wait(3)
+                driver.get(search_url)
+            i += 1
+            if i == len(ref_data) : break
 
 def use_and_update_ref() :
-    line = []
-    with open('ref_sub.csv', 'r', encoding='utf-8', newline='') as f_ref:
-        while True:
-            lines = f_ref.readline().replace("\n", "")
-            if not lines: break
-            line.append(lines)
-        while True:
-            ingred_to_use = input("어떤 재료를 사용하겠습니까? (안하면 n) ")
-            if ingred_to_use == 'n': break
-            for i in range(len(line)):
-                subject_name = line[i].split(',')[0]
-                subject_num = line[i].split(',')[1]
-                if ingred_to_use == subject_name[:len(subject_name)]:
-                    num_to_now = int(subject_num[:len(subject_num) - 2])  # 현재 냉장고에 있는 재료 수
-                    num_to_want = int(input("몇 %s 쓰겠습니까? " % subject_num[len(subject_num) - 2]))  # 쓰고 싶은 재료 수
-                    if num_to_want > num_to_now:
-                        purc_conf = input("현재 냉장고에 있는 수 보다 많습니다. 주문하시겠습니까? (y or n) ")
-                        if purc_conf == 'y' :
-                            purc_want_food(subject_name)
-                        else :
-                            break
-                    num_to_left = num_to_now - num_to_want  # 남는 재료 수
-                    if num_to_left == 0 :
-                        purc_obj = input("%s 재고가 0입니다. 주문하시겠습니까?" %subject_name)
-                        if purc_obj == 'y' :
-                            purc_want_food(subject_name)
-                    for i in range(len(line)):
-                        if line[i].split(',')[0] == subject_name:
-                            line.append(subject_name + ',' + str(num_to_left) + line[i].split(',')[1][
-                                len(line[i].split(',')[1]) - 2] + '\r')
-                            line.pop(i)
-                            break
-                    with open('ref_sub.csv', 'w', encoding='utf-8', newline='') as f_ref:
-                        for i in range(len(line)):
-                            f_ref_writer = csv.writer(f_ref)
-                            f_ref_writer.writerow([line[i].split(',')[0], line[i].split(',')[1].replace("\r", "")])
+    global ref_data
+    while True:
+        ingred_to_use = input("어떤 재료를 사용하겠습니까? (안하면 n) (ex) 사과) ")
+        if ingred_to_use == 'n': break
+        for i in range(len(ref_data)):
+            if ingred_to_use == list_name[i]:
+                subject_name = list_name[i]
+                subject_quan = list_quan[i]
+                num_to_now = int(subject_quan[:len(subject_quan) - 1])  # 현재 냉장고에 있는 재료 수
+                num_to_want = int(input("몇 %s 쓰겠습니까? " % subject_quan[len(subject_quan) - 1]))  # 쓰고 싶은 재료 수
+                if num_to_want > num_to_now:
+                    purc_conf = input("현재 냉장고에 있는 수 보다 많습니다. 주문하시겠습니까? (y or n) ")
+                    if purc_conf == 'y' :
+                        purc_want_food(subject_name)
+                    else :
                         break
+                num_to_left = num_to_now - num_to_want  # 남는 재료 수
+                if num_to_left == 0:
+                    purc_obj = input("%s 재고가 0입니다. 주문하시겠습니까? (하고싶으면 y, 안하면 n) " % subject_name)
+                    if purc_obj == 'y':
+                        purc_want_food(subject_name)
+                    elif purc_obj == 'n':
+                        list_name.pop(i)
+                        list_quan.pop(i)
+                else:
+                    for i in range(len(ref_data)):
+                        if list_name[i] == subject_name:
+                            list_name.append(subject_name)
+                            list_quan.append(str(num_to_left) + subject_quan[len(subject_quan) - 1])
+                            list_name.pop(i)
+                            list_quan.pop(i)
+                            break
+                updated_data = {'name':list_name, 'quanity':list_quan}
+                ref_data = pd.DataFrame(updated_data)
+                ref_data.to_csv('ref_sub.csv', index=False)
+                break
 
 def add_ref () :
-    option_choice = int(input("1. 새로운 재고를 추가하겠습니까? 2. 원래 있던 재고 수를 변경하시겠습니까? "))
+    global ref_data
+    option_choice = int(input("1. 새로운 재고를 추가하겠습니까? 2. 원래 있는 재고 수에 더하시겠습니까? "))
     if option_choice == 1 :
-        with open('ref_sub.csv', 'a', encoding='utf-8', newline='') as f_ref:
-            while True :
-                add_name = input("품명을 적으세요. (n 하면 종료) ")
-                if add_name == 'n' : break
-                add_num = input("개수를 적으세요 (ex) 3개) ")
-                f_ref_writer = csv.writer(f_ref)
-                f_ref_writer.writerow([add_name, add_num])
-    elif option_choice == 2 :
-        line = []
-        with open('ref_sub.csv', 'r', encoding='utf-8', newline='') as f_ref:
-            while True:
-                lines = f_ref.readline().replace("\n", "")
-                if not lines: break
-                line.append(lines)
         while True :
-            add_name = input("품명을 적으세요. (n하면 종료) ")
+            add_name = input("품명을 적으세요. (n 하면 종료) (ex) 사과) ")
             if add_name == 'n' : break
-            add_num = input("개수를 적으세요 (ex) 3) ")
-            for i in range(len(line)):
-                if line[i].split(',')[0] == add_name:
-                    line.append(add_name + ',' + str(add_num) + line[i].split(',')[1][
-                        len(line[i].split(',')[1]) - 2] + '\r')
-                    line.pop(i)
+            list_name.append(add_name)
+            add_quan = input("수를 적으세요 (ex) 3개) ")
+            list_quan.append(add_quan)
+        updated_data = {'name': list_name, 'quanity': list_quan}
+        ref_data = pd.DataFrame(updated_data)
+        ref_data.to_csv('ref_sub.csv', index=False)
+    elif option_choice == 2 :
+        while True :
+            add_name = input("품명을 적으세요. (n하면 종료) (ex) 사과) ")
+            if add_name == 'n' : break
+            add_quan = int(input("수를 적으세요 (ex) 3) "))
+            for i in range(len(ref_data)):
+                subject_name = list_name[i]
+                subject_quan = list_quan[i]
+                if subject_name == add_name:
+                    list_name.append(subject_name)
+                    list_quan.append(str(add_quan + int(subject_quan[:len(subject_quan)-1]))+subject_quan[len(subject_quan)-1])
+                    list_name.pop(i)
+                    list_quan.pop(i)
                     break
-            with open('ref_sub.csv', 'w', encoding='utf-8', newline='') as f_ref:
-                for i in range(len(line)):
-                    f_ref_writer = csv.writer(f_ref)
-                    f_ref_writer.writerow([line[i].split(',')[0], line[i].split(',')[1].replace("\r", "")])
-                break
+            updated_data = {'name': list_name, 'quanity': list_quan}
+            ref_data = pd.DataFrame(updated_data)
+            ref_data.to_csv('ref_sub.csv', index=False)
 
 def search_want_music (object_music) :
     search_url = "https://www.youtube.com/results?search_query=%s" %object_music
@@ -433,7 +463,7 @@ def ai_person_info() :
                 print("스피커를 끄겠습니다.")
                 g_speaker = not g_speaker
             else :
-                music_input = int(input("밥 먹을 때 듣기 좋은 음악을 들으시겠습니까? (y or n) "))
+                music_input = input("밥 먹을 때 듣기 좋은 음악을 들으시겠습니까? (y or n) ")
                 if music_input == 'y':
                     search_want_music("밥 먹을 때 듣기 좋은 음악")
                 else:
@@ -482,7 +512,15 @@ def ai_person_info() :
                         music_input_input = input("듣고싶은 음악을 적어주세요.(실제로는 불러주세요) ")
                         search_want_music(music_input_input)
     elif behavior == 6 : # TV 보기
-        pass
+        if g_lamp == True:
+            lamp_input = input("조명이 켜져 있습니다. 조명을 끄겠습니까? (y or n) ")
+            if lamp_input == 'y':
+                g_lamp = not g_lamp
+        elif g_lamp == False:
+            lamp_input = input("조명을 켜겠습니까? (y or n) ")
+            if lamp_input == 'y':
+                print("조명이 켜졌습니다.")
+                g_lamp = not g_lamp
     elif behavior == 7 : # 음악
         if g_speaker == False :
             speaker_input_false = input("스피커를 키겠습니까? (y or n) ")
@@ -615,6 +653,9 @@ def ai_weather_info() :
                                 if dust_accept == 'y' :
                                     g_Balcony_Windows = not g_Balcony_Windows
                                     print("창문을 열었습니다.")
+                            else :
+                                g_Balcony_Windows = not g_Balcony_Windows
+                                print("창문을 열었습니다.")
 
             if f_json[i]["category"] == "PTY": # 강수형태
                 precipitation = f_json[i]["fcstValue"]
@@ -647,6 +688,9 @@ def ai_weather_info() :
                                 if dust_accept == 'y' :
                                     g_Balcony_Windows = not g_Balcony_Windows
                                     print("창문을 열었습니다.")
+                            else :
+                                g_Balcony_Windows = not g_Balcony_Windows
+                                print("창문을 열었습니다.")
 
 def smart_mode() :
     global g_AI_Mode
@@ -704,10 +748,11 @@ def do_behavior(behavior) :
         pass
     elif behavior == 4 : # 식사
         while True :
-            do_ref = int(input("식사와 관련된 행동을 하시겠습니까? 1: 냉장고 리스트 확인 2: 레시피 보기 3: 재고 수정 4: 재고 추가 5: 종료 "))
+            do_ref = int(input("식사와 관련된 행동을 하시겠습니까? 1: 냉장고 리스트 확인 2: 레시피 보기 3: 재고 사용 4: 재고 추가 5: 종료 "))
             if do_ref == 1 :
                 read_ref()
             elif do_ref == 2 :
+                read_ref()
                 make_food_ref()
             elif do_ref == 3 :
                 read_ref()
@@ -720,7 +765,9 @@ def do_behavior(behavior) :
     elif behavior == 5 : # 목욕
         pass
     elif behavior == 6 : # TV 보기
-        pass
+        main()
+        read_news()
+        want_news()
     elif behavior == 7 : # 음악
         pass
     elif behavior == 8 : # 독서
@@ -746,8 +793,8 @@ while True :
     elif(menu_num == 3) :
         smart_mode()
     elif(menu_num == 4) :
-        behavior = int(input("현재 당신은 무엇을 하고 있습니까? (1. 기상 2. 출근/외출 3. 귀가 4. 식사 5. 목욕 6. TV 보기 7. 음악"
-                             "8. 독서 9. 수면) "))
+        behavior = int(input("현재 당신은 무엇을 하고 있습니까? (1. 기상 2. 출근/외출 3. 귀가 4. 식사 5. 목욕 6. TV 뉴스 보기"
+                             " 7. 음악 8. 독서 9. 수면) "))
         do_behavior(behavior)
     else :
         break

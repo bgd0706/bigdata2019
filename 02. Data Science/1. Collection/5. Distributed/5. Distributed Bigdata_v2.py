@@ -18,7 +18,7 @@ def makeFile () :
     upper_len = 3*(len(os.listdir())-1) # 0 3 6 9 12 ....
 
     os.chdir(lower_dir+"%s" %str(len(os.listdir()))) # 파일을 만들고 싶은 naver_ranking 디렉터리에 감
-    lower_len = len(os.listdir())+1 # 1 2 3 으로 반복
+    lower_len = len(os.listdir())+1 # 1 1. CSV 3 으로 반복
 
     f = open('movie%s.csv' % str(upper_len+lower_len), 'w', newline='')
     csv_writer = csv.writer(f)

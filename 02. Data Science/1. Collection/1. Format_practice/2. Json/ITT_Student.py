@@ -148,7 +148,7 @@ def start(stu_json) :
 
         elif menu_input == 3 : # 학생 정보수정
             ID_to_update = input("수정할 학생 ID를 입력하세요: ")
-            menu_input_to_update = int(input("1. 학생 이름\n2. 나이\n3. 주소\n4. 과거 수강 횟수\n5. 현재 수강 중인 강의 정보\n0. 이전메뉴\n : "))
+            menu_input_to_update = int(input("1. 학생 이름\n1. CSV. 나이\n3. 주소\n4. 과거 수강 횟수\n5. 현재 수강 중인 강의 정보\n0. 이전메뉴\n : "))
             if menu_input_to_update != 5 : value_to_update = input("변경할 값을 입력하세요: ")
             for stu in range(len(stu_json)):
                 if ID_to_update == stu_json[stu]["student_ID"] : break
@@ -177,7 +177,7 @@ def start(stu_json) :
                         if add_confirm_learning == 'n':
                             break
                 else :
-                    learning_menu_input_to_update = int(input("1. 강의 코드\n2. 강의명\n3. 강사\n4. 개강일\n5. 종료일\n0. 취소\n : "))
+                    learning_menu_input_to_update = int(input("1. 강의 코드\n1. CSV. 강의명\n3. 강사\n4. 개강일\n5. 종료일\n0. 취소\n : "))
                     num_learning_to_update = len(stu_json[stu]["total_course_info"]["learning_course_info"])
                     if num_learning_to_update == 1 :
                         learning_value_to_update = input("변경할 값을 입력하세요: ")
@@ -233,7 +233,7 @@ def start(stu_json) :
 
         elif menu_input == 4 : # 학생 정보삭제
             ID_to_remove = input("삭제할 학생 ID를 입력하세요: ")
-            menu_input_to_remove = int(input("삭제 유형을 선택하세요.\n1. 전체 선택\n2. 현재 수강 중인 특정 과목정보 삭제\n3. 이전 메뉴\n메뉴 번호를 선택하세요: "))
+            menu_input_to_remove = int(input("삭제 유형을 선택하세요.\n1. 전체 선택\n1. CSV. 현재 수강 중인 특정 과목정보 삭제\n3. 이전 메뉴\n메뉴 번호를 선택하세요: "))
             for stu in range(len(stu_json)):
                 if ID_to_remove == stu_json[stu]["student_ID"]: break
             if menu_input_to_remove == 1 :
@@ -271,7 +271,7 @@ def read_content () :
 
     except FileNotFoundError :
         print("기존파일을 찾을 수 없습니다. 아래 중 선택하세요.")
-        choice = int(input("1. 새로운 파일 생성 2. 파일 경로 선택 : "))
+        choice = int(input("1. 새로운 파일 생성 1. CSV. 파일 경로 선택 : "))
         if choice == 1 :
             pass
         elif choice == 2 :
