@@ -2,9 +2,21 @@ import pandas as pd
 import MySQLdb
 import csv,sqlite3,sys
 
-filename = "./Student_Info_DB_Scheme.xlsx"
-con = MySQLdb.connect(host='localhost', port=3306, db='my_students', user='root', passwd='1111', charset='utf8mb4')
+filename_stu = "./Basic_Student_Info.xlsx"
+filename_lan = "./Student_Language.xlsx"
+con = MySQLdb.connect(host='localhost', port=3306, db='erd_students', user='root', passwd='1111', charset='utf8mb4')
 c = con.cursor()
+
+def create() :
+    create_table_stu = """CREATE TABLE IF NOT EXISTS Students
+                            (Student_ID VARCHAR(20), Name VARCHAR(10), Sex VARCHAR(10), Age INT, Major VARCHAR(10));"""
+    c.execute(create_table_stu)
+    con.commit()
+
+    create_table_lan = """CREATE TABLE IF NOT EXISTS Languages
+                            (Student_ID VARCHAR(20), Name VARCHAR(10), Level VARCHAR(10), Period VARCHAR(10));"""
+    c.execute(create_table_lan)
+    con.commit()
 
 def digit(x): # x를 기준으로 3만큼 오른쪽 정렬하고, 빈 곳은 0으로 치환
    return "{0:0>3}".format(x)
@@ -18,11 +30,11 @@ def summary () :
     woman = c.fetchall()
     c.execute("SELECT * FROM Students WHERE Major='컴퓨터 공학' OR Major='통계학'")
     programming_major = c.fetchall()
-    c.execute("SELECT * FROM Students WHERE NOT Practicable_computer_languages='nan'")
+    c.execute("SELECT * FROM Languages WHERE NOT Name=''")
     programming_exp = c.fetchall()
-    c.execute("SELECT * FROM Students WHERE NOT High_level='nan'")
+    c.execute("SELECT * FROM Languages WHERE Level='상'")
     high_count = c.fetchall()
-    c.execute("SELECT * FROM Students WHERE Practicable_computer_languages='Python'")
+    c.execute("SELECT * FROM Languages WHERE Name='Python'")
     python_exp = c.fetchall()
     c.execute("SELECT Name, Age FROM Students WHERE Age>=20 AND Age<30")
     twenty = c.fetchall()
@@ -365,34 +377,20 @@ def delete () :
     con.commit()
 
 def main () :
-    create_table = """CREATE TABLE IF NOT EXISTS Students
-                        (Student_ID VARCHAR(20), Name VARCHAR(10), Sex VARCHAR(10), Age INT(10), Major VARCHAR(10), 
-                        Practicable_computer_languages VARCHAR(30), 
-                        High_level VARCHAR(20), Middle_level VARCHAR(20), Low_level VARCHAR(20));"""
-    c.execute(create_table)
-    con.commit()
-
+    create()
     while True :
         print("<화면 출력>\n학생정보 DB 데이터 분석 시작..")
         menu_input = int(input(("[메인 메뉴]\n1. 요약정보\n2. 입력\n3. 조회\n4. 수정\n5. 삭제\n6. 종료\n메뉴 입력: ")))
-        if menu_input == 1 : # 요약정보
-            summary()
-        elif menu_input == 2 : # 입력
-            insert()
+        if menu_input == 1 : summary() # 요약정보
+        elif menu_input == 2 : insert() # 입력
         elif menu_input == 3 : # 조회
             while True :
                 select_input= int(input(("<조회 서브 메뉴>\n1. 개별 학생 조회\n2. 전체 학생 조회\n3. 상위메뉴\n메뉴 입력: ")))
-                if select_input == 1 : # 개별 학셍 조회
-                    each_select()
-                elif select_input == 2 : # 전체 학생 조회
-                    total_select()
-                elif select_input == 3 : # 상위 메뉴
-                    break
-        elif menu_input == 4 : # 수정
-            update()
-        elif menu_input == 5 : # 삭제
-            delete()
-        elif menu_input == 6 : # 종료
-            break
+                if select_input == 1 : each_select() # 개별 학생 조회
+                elif select_input == 2 : total_select() # 전체 학생 조회
+                elif select_input == 3 : break # 상위 메뉴
+        elif menu_input == 4 : update() # 수정
+        elif menu_input == 5 : delete() # 삭제
+        elif menu_input == 6 : break # 종료
 
 main()
