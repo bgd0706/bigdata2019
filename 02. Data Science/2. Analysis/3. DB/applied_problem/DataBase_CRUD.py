@@ -31,27 +31,51 @@ def summary () :
     high_count = c.fetchall()
     c.execute("SELECT * FROM Students WHERE Practicable_computer_languages='Python'")
     python_exp = c.fetchall()
-    c.execute("SELECT * FROM Students WHERE Age>=20 AND Age<30")
+    c.execute("SELECT Name, Age FROM Students WHERE Age>=20 AND Age<30")
     twenty = c.fetchall()
-    c.execute("SELECT * FROM Students WHERE Age>=30 AND Age<40")
+    two_info = []
+    for two in twenty :
+        for column_index in range(len(two)) :
+            two_info.append(str(two[column_index]))
+    c.execute("SELECT Name, Age FROM Students WHERE Age>=30 AND Age<40")
     thirty = c.fetchall()
-    c.execute("SELECT * FROM Students WHERE Age>=40 AND Age<40")
+    three_info = []
+    for three in thirty :
+        for column_index in range(len(three)) :
+            three_info.append(str(three[column_index]))
+    c.execute("SELECT Name, Age FROM Students WHERE Age>=40 AND Age<50")
     fourty = c.fetchall()
+    fourty_info = []
+    for four in fourty :
+        for column_index in range(len(four)) :
+            fourty_info.append(str(four[column_index]))
 
     print("<요약정보>")
     print("* 전체 학생수: %s명" %len(total))
     print("* 성별")
-    print(" - 남학생: %s명" %len(man))
-    print(" - 여학생: %s명" %len(woman))
+    print(" - 남학생: %s명 (%0.1f%%)" %(len(man), len(man)/len(total) * 100))
+    print(" - 여학생: %s명 (%0.1f%%)" %(len(woman), len(woman)/len(total) * 100))
     print("* 전공여부")
-    print(" - 전공자(컴퓨터 공학, 통계학): %s명" %len(programming_major))
-    print(" - 프로그래밍 언어 경험자: %s명" %len(programming_exp))
-    print(" - 프로그래밍 언어 상급자: %s명" %len(high_count))
-    print(" - 파이썬 경험자: %s명" %len(python_exp))
+    print(" - 전공자(컴퓨터 공학, 통계학): %s명 (%0.1f%%)" %(len(programming_major), len(programming_major)/len(total) * 100))
+    print(" - 프로그래밍 언어 경험자: %s명 (%0.1f%%)" %(len(programming_exp), len(programming_exp)/len(total) * 100))
+    print(" - 프로그래밍 언어 상급자: %s명 (%0.1f%%)" %(len(high_count), len(high_count)/len(total) * 100))
+    print(" - 파이썬 경험자: %s명 (%0.1f%%)" %(len(python_exp), len(python_exp)/len(total) * 100))
     print("* 연령대")
-    print(" - 20대: %s명" %len(twenty))
-    print(" - 30대: %s명" %len(thirty))
-    print(" - 40대: %s명" %len(fourty))
+    print(" - 20대: %s명 (%0.1f%%)" %(len(twenty), len(twenty)/len(total) * 100), end=' ')
+    print("[", end=' ')
+    for idx in range(0, len(two_info), 2):
+        print("%s:%s " % (two_info[idx], two_info[idx+1]), end= '')
+    print("]")
+    print(" - 30대: %s명 (%0.1f%%)" %(len(thirty), len(thirty)/len(total) * 100), end= ' ')
+    print("[", end=' ')
+    for idx in range(0, len(three_info), 2):
+        print("%s:%s " % (three_info[idx], three_info[idx+1]), end='')
+    print("]")
+    print(" - 40대: %s명 (%0.1f%%)" %(len(fourty), len(fourty)/len(total) * 100), end=' ')
+    print("[", end=' ')
+    for idx in range(0, len(fourty_info), 2):
+        print("%s:%s " % (fourty_info[idx], fourty_info[idx+1]), end='')
+    print("]")
 
 def insert () :
     print("신규 학생 정보 입력>")
@@ -77,10 +101,6 @@ def insert () :
                 list_pro_middle_level.append(add_pro_name)
             elif add_pro_level == "하" :
                 list_pro_low_level.append(add_pro_name)
-        if len(list_pro_name) ==0 : list_pro_name.append('nan')
-        if len(list_pro_high_level) ==0 : list_pro_high_level.append('nan')
-        if len(list_pro_middle_level) ==0 : list_pro_middle_level.append('nan')
-        if len(list_pro_low_level) ==0 : list_pro_low_level.append('nan')
 
         c.execute("SELECT Student_ID FROM Students")
         rows = c.fetchall()
@@ -143,7 +163,7 @@ def each_select () :
             print(" - 성별: %s" %row_list_output[2])
             print(" - 나이: %s" %row_list_output[3])
             print(" - 전공: %s" %row_list_output[4])
-            if row_list_output[5] != 'nan' :
+            if row_list_output[5] != '' :
                 practicable = row_list_output[5].split(',')
                 High = row_list_output[6].split(',')
                 Middle = row_list_output[7].split(',')
@@ -180,7 +200,7 @@ def total_select () :
         print(" - 성별: %s" % row_list_output[2])
         print(" - 나이: %s" % row_list_output[3])
         print(" - 전공: %s" % row_list_output[4])
-        if row_list_output[5] != 'nan' :
+        if row_list_output[5] != '' :
             practicable = row_list_output[5].split(',')
             High = row_list_output[6].split(',')
             Middle = row_list_output[7].split(',')
@@ -212,7 +232,7 @@ def update () :
         print("2. 성별: %s" % row_list_output[2])
         print("3. 나이: %s" % row_list_output[3])
         print("4. 전공: %s" % row_list_output[4])
-        if row_list_output[5] == 'nan' :
+        if row_list_output[5] == '' :
             print("5. 사용 가능한 언어 없음")
         else :
             practicable = row_list_output[5].split(',')
@@ -241,7 +261,7 @@ def update () :
                 print("%s. Level: %s" %(look_index, lan_level[practicable[pra_idx]]))
                 look_index += 1
     index_to_update = int(input("수정할 항목의 번호를 입력하세요: "))
-    if row_list_output[5] != "nan" :
+    if row_list_output[5] != "" :
         value_to_update = input("수정할 값을 입력하세요: ")
     if index_to_update == 1 :
         c.execute("UPDATE Students SET Name='%s' WHERE Student_ID='%s';" %(value_to_update, ID_to_update))
@@ -252,7 +272,7 @@ def update () :
     elif index_to_update == 4 :
         c.execute("UPDATE Students SET Major='%s' WHERE Student_ID='%s';" % (value_to_update, ID_to_update))
     else :
-        if row_list_output[5] == 'nan' :
+        if row_list_output[5] == '' :
             list_pro_name = []
             list_pro_high_level = []
             list_pro_middle_level = []
@@ -269,9 +289,6 @@ def update () :
                     list_pro_middle_level.append(add_pro_name)
                 elif add_pro_level == "하":
                     list_pro_low_level.append(add_pro_name)
-            if len(list_pro_high_level) == 0: list_pro_high_level.append('nan')
-            if len(list_pro_middle_level) == 0: list_pro_middle_level.append('nan')
-            if len(list_pro_low_level) == 0: list_pro_low_level.append('nan')
             c.execute("UPDATE Students SET Practicable_computer_languages='%s', High_level='%s', Middle_level='%s',"
                       "Low_level='%s' WHERE Student_ID='%s'"
                       % ( (',').join(list_pro_name),(',').join(list_pro_high_level),(',').join(list_pro_middle_level),
@@ -330,14 +347,20 @@ def update () :
                                               % ((',').join(Low), ID_to_update))
                                     break
                         if value_to_update == '상' :
+                            if High[0] == '' :
+                                High.pop(0)
                             High.append(practicable[pra_idx_update])
                             c.execute("UPDATE Students SET High_level='%s' WHERE Student_ID='%s'"
                                 % ( (',').join(High), ID_to_update))
                         elif value_to_update == '중':
+                            if Middle[0] == '' :
+                                Middle.pop(0)
                             Middle.append(practicable[pra_idx_update])
                             c.execute("UPDATE Students SET Middle_level='%s' WHERE Student_ID='%s'"
                                       % ((',').join(Middle), ID_to_update))
                         elif value_to_update == '하' :
+                            if Low[0] == '' :
+                                Low.pop(0)
                             Low.append(practicable[pra_idx_update])
                             c.execute("UPDATE Students SET Low_level='%s' WHERE Student_ID='%s'"
                                 % ( (',').join(Low), ID_to_update))
@@ -373,9 +396,3 @@ def main () :
             break
 
 main()
-
-
-
-
-
-
