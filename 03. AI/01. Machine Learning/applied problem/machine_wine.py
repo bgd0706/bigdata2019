@@ -9,9 +9,10 @@ wine.columns = wine.columns.str.replace(' ', '_')
 
 wine_label = wine.loc[:, "quality"]
 
-v_list = ['alcohol', 'chlorides', 'citric_acid', 'density', 'fixed_acidity', 'free_sulfur_dioxide', 'pH', 'residual_sugar',
-        'sulphates', 'total_sulfur_dioxide', 'volatile_acidity']
-# v_list = ['alcohol','citric_acid','density','free_sulfur_dioxide','sulphates','total_sulfur_dioxide','volatile_acidity']
+# v_list = ['alcohol', 'chlorides', 'citric_acid', 'density', 'fixed_acidity', 'free_sulfur_dioxide', 'pH', 'residual_sugar',
+#         'sulphates', 'total_sulfur_dioxide', 'volatile_acidity']
+# v_list = ['alcohol','citric_acid','density','free_sulfur_dioxide','sulphates','total_sulfur_dioxide','volatile_acidity'] # 머신러닝 안했을 때 최고의 조합
+v_list = ['alcohol', 'fixed_acidity', 'free_sulfur_dioxide', 'residual_sugar','total_sulfur_dioxide']
 wine_data = wine.loc[:, v_list]
 
 clf = svm.SVC(gamma='auto')

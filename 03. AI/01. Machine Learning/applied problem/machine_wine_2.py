@@ -11,6 +11,7 @@ wine_label = wine.loc[:, "quality"]
 v_list = ['alcohol', 'chlorides', 'citric_acid', 'density', 'fixed_acidity', 'free_sulfur_dioxide', 'pH', 'residual_sugar',
         'sulphates', 'total_sulfur_dioxide', 'volatile_acidity']
 
+
 anwser_dict = {}
 total_count = 0
 for c_len in range(1, len(v_list)+1) :
