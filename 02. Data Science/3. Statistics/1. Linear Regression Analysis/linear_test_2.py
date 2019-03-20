@@ -12,27 +12,27 @@ v_list = ['alcohol', 'chlorides', 'citric_acid', 'density', 'fixed_acidity', 'fr
 answer_dict = {}
 
 for c_len in range(1, len(v_list)+1) :
-        a_list =list(map(','.join, itertools.combinations(v_list, c_len)))
-        for a_len in range(len(a_list)) :
-                b_list = a_list[a_len].split(',') # 조합
-                my_formula = 'quality ~ '
-                for idx in range(len(b_list)):
-                    if idx != len(b_list) - 1:
-                            my_formula = my_formula + b_list[idx] + ' + '
-                    else:
-                            my_formula = my_formula + b_list[idx]
-                lm = ols(my_formula,data=wine).fit()
+    a_list =list(map(','.join, itertools.combinations(v_list, c_len)))
+    for a_len in range(len(a_list)) :
+        b_list = a_list[a_len].split(',') # 조합
+        my_formula = 'quality ~ '
+        for idx in range(len(b_list)):
+            if idx != len(b_list) - 1:
+                    my_formula = my_formula + b_list[idx] + ' + '
+            else:
+                    my_formula = my_formula + b_list[idx]
+        lm = ols(my_formula,data=wine).fit()
 
-                independent_variables = wine[b_list]
-                new_observations = wine.loc[wine.index, independent_variables.columns]
-                y_predicted = lm.predict(new_observations)
-                y_predicted_rounded = [round(score) for score in y_predicted]
+        independent_variables = wine[b_list]
+        new_observations = wine.loc[wine.index, independent_variables.columns]
+        y_predicted = lm.predict(new_observations)
+        y_predicted_rounded = [round(score) for score in y_predicted]
 
-                count = 0
-                for idx in range(len(wine.index)) :
-                    if wine['quality'][idx] == y_predicted_rounded[idx] :
-                        count += 1
-                answer_dict[(',').join(b_list)] = count / len(wine) * 100
+        count = 0
+        for idx in range(len(wine.index)) :
+            if wine['quality'][idx] == y_predicted_rounded[idx] :
+                count += 1
+        answer_dict[(',').join(b_list)] = count / len(wine) * 100
 
 sortedList = sorted(answer_dict.items(), key=operator.itemgetter(1), reverse=True)
 print(sortedList[0])

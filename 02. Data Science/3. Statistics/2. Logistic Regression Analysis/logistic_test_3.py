@@ -28,6 +28,7 @@ dependent_variable = churn['churn01']
 
 answer_dic = {}
 answer_index = 1
+total = 0
 for c_len in range(1, len(column_list)+1) :
     a_list =list(map(','.join, itertools.combinations(column_list, c_len)))
     for a_len in range(len(a_list)) :
@@ -47,7 +48,10 @@ for c_len in range(1, len(column_list)+1) :
             if churn['churn01'][idx] == y_predicted_rounded[idx]:
                 count += 1
         answer_dic[(',').join(b_list)] = round(count / len(churn.index) * 100, 2)
-    print(c_len)
+        print(c_len)
+        print("="*80)
+        total += 1
+        print(total)
 
 sortedList = sorted(answer_dic.items(), key=operator.itemgetter(1), reverse=True)
 print(sortedList)
