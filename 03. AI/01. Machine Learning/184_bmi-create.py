@@ -2,9 +2,12 @@ import random
 # BMI를 계산해서 레이블을 리턴하는 함수
 def calc_bmi(h, w) :
     bmi = w / (h/100) ** 2
-    if bmi < 18.5 : return "thin"
-    elif 18.5 <= bmi < 25 : return "normal"
-    else : return "fat"
+    if bmi < 18.5 :
+        return "thin"
+    elif 18.5 <= bmi < 25 :
+        return "normal"
+    else :
+        return "fat"
 # 출력 파일 준비하기
 fp = open("bmi.csv", "w", encoding="utf-8")
 fp.write("height,weight,label\r\n")
