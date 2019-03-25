@@ -1,22 +1,32 @@
+import pandas as pd
 from sklearn import svm, metrics
 from sklearn.model_selection import train_test_split
-import pandas as pd
 
-csv = pd.read_csv('train_test.csv', header=None)
-csv_label = csv.loc[:,0]
-csv_data = csv.loc[:, 1:]
-images = []
-labels = []
+data = pd.read_csv('./mnist/train.csv', header=None)
+test = pd.read_csv('./mnist/t10k.csv', header=None)
 
-for idx in range(len(csv_label)) :
-    if idx % 2 == 0 :
-        labels.append(csv_label[idx])
+all_csv = []
+all_csv.append(data)
+all_csv.append(test)
 
-for idx in range(len(csv_data)) :
-    if idx % 2 == 0 :
-        cols = csv_data.iloc[idx,:]
-        vals = list(map(lambda n: int(n) / 256, cols))
-        images.append(vals)
+all_csv_concat = pd.concat(all_csv)
+all_csv_concat.to_csv("./mnist/merge.csv", index=False,header=0)
+
+def load_csv(fname) :
+    labels = []
+    images = []
+    with open(fname, "r") as f :
+        for line in f :
+            cols = line.split(",")
+            if len(cols) < 2 : continue
+            labels.append(int(cols.pop(0)))
+            vals = list(map(lambda n: int(n) / 256, cols))
+            images.append(vals)
+    return {"labels":labels, "images":images}
+
+file_read = load_csv('./mnist/merge.csv')
+images = file_read["images"]
+labels = file_read["labels"]
 
 train_data, test_data, train_label, test_label = train_test_split(images, labels)
 

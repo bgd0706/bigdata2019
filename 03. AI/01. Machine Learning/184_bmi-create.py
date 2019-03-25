@@ -13,7 +13,7 @@ fp = open("bmi.csv", "w", encoding="utf-8")
 fp.write("height,weight,label\r\n")
 # 무작위로 데이터 생성하기
 cnt = {"thin":0, "normal":0, "fat":0}
-for i in range(100000) :
+for i in range(30000) :
     h = random.randint(120, 200)
     w = random.randint(35,80)
     label = calc_bmi(h, w)

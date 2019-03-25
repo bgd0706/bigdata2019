@@ -1,0 +1,52 @@
+State,Postal,Beer,Wine
+Alabama,AL,1.2,0.22
+Alaska,AK,1.31,0.54
+Arizona,AZ,1.19,0.38
+Arkansas,AR,1.07,0.17
+California,CA,1.05,0.55
+Colorado,CO,1.22,0.46
+Connecticut,CT,0.89,0.59
+Delaware,DE,1.31,0.57
+District of Columbia,FL,1.26,1
+Florida,GA,1.21,0.48
+Georgia,HI,1.08,0.25
+Hawaii,ID,1.3,0.53
+Idaho,IL,1.05,0.92
+Illinois,IN,1.22,0.39
+Indiana,IA,1.09,0.25
+Iowa,KS,1.42,0.18
+Kansas,KY,1.18,0.14
+Kentucky,LA,1.11,0.18
+Louisiana,ME,1.5,0.28
+Maine,MD,1.24,0.42
+Maryland,MA,0.97,0.37
+Massachusetts,MI,1.02,0.61
+Michigan,MN,1.1,0.31
+Minnesota,MS,1.19,0.37
+Mississippi,MO,1.41,0.11
+Missouri,MT,1.3,0.3
+Montana,NE,1.66,0.45
+Nebraska,NV,1.46,0.2
+Nevada,NH,1.57,0.58
+New Hampshire,NJ,1.72,0.84
+New Jersey,NM,0.92,0.57
+New Mexico,NY,1.37,0.32
+New York,NC,0.91,0.46
+North Carolina,ND,1.1,0.34
+North Dakota,OH,1.63,0.25
+Ohio,OK,1.28,0.26
+Oklahoma,OR,1.18,0.18
+Oregon,PA,1.28,0.49
+Pennsylvania,RI,1.35,0.23
+Rhode Island,SC,1.1,0.53
+South Carolina,SD,1.36,0.24
+South Dakota,TN,1.53,0.22
+Tennessee,TX,1.05,0.21
+Texas,UT,1.42,0.28
+Utah,VT,0.7,0.17
+Vermont,VA,1.36,0.63
+Virginia,WA,1.11,0.43
+Washington,WV,1.09,0.51
+West Virginia,WI,1.24,0.1
+Wisconsin,WY,1.49,0.31
+Wyoming,WY,1.45,0.22
