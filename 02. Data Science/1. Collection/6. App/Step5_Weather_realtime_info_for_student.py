@@ -2,8 +2,7 @@ import urllib.request, datetime, json, time
 
 access_key = "XtvjsQxlsgO41hz7VcZ3PmLekszkSNs2bpmvNTR%2Fn3VJ9uy6sI3jd%2B8RmLgU3vI5%2FpTae%2BoYpWSP4MKtixEHAw%3D%3D"
 
-def get_Request_URL (url) : # (1) 기상 정보 (동네예보정보 조회 서비스) / (1. CSV) 통합대기환경 정보(대기오염정보 조회 서비스)
-
+def get_Request_URL (url) : # 기상 정보 (동네예보정보 조회 서비스)
     req = urllib.request.Request(url)
 
     try :
@@ -16,7 +15,7 @@ def get_Request_URL (url) : # (1) 기상 정보 (동네예보정보 조회 서�
         print(" [%s] Error for URL : %s" % (datetime.datetime.now(), url))
         return None
 
-def get_Weather_URL (day_time) : # (1) 기상 정보 (돈네예보정보 조회 서비스) request 보내기 전, url 만드는 함수
+def get_Weather_URL (day_time) : # 기상 정보 (동네예보정보 조회 서비스) request 보내기 전, url 만드는 함수
     end_point = "http://newsky2.kma.go.kr/service/SecndSrtpdFrcstInfoService2/ForecastTimeData"
 
     parameters = "?_type=json&serviceKey=" + access_key
@@ -57,7 +56,6 @@ def get_Realtime_Weather_Info() : # (1) 기상 정보 (동네예보정보 조회
         Make_Weather_Json(day_time)
     elif 0 <= day_min_int <= 30 : ## 실시간 업데이트가 되지 않을 경우, 가장 최신인 한 시간 전껄로
         day_hour_int = int(day_hour)
-
         day_hour_int = day_hour_int - 1
         revised_min = 60 + (day_min_int-30) # 정확히 30분을 뺀다.
         day_time = "{0:0>2}".format(day_hour_int) + str(revised_min) ## 시간이 한 자리 수일 때 930 되는 것을 0930으로 바꿔줌

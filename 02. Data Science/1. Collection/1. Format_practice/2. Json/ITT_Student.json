@@ -43,21 +43,21 @@
         }
     },
     {
-        "address": "동구 신암동",
+        "address": "달서구 죽전동",
         "student_ID": "ITT003",
         "student_age": "29",
-        "student_name": "전민하",
+        "student_name": "박규동",
         "total_course_info": {
             "learning_course_info": [
                 {
-                    "close_date": "2019-01-01",
+                    "close_date": "2019-04-27",
                     "course_code": "IB2929",
-                    "course_name": "할렐루야",
-                    "open_date": "2018-01-01",
+                    "course_name": "자바/R/Python 빅데이터 분석",
+                    "open_date": "2018-01-28",
                     "teacher": "이현구"
                 }
             ],
-            "num_of_course_learned": "2"
+            "num_of_course_learned": "0"
         }
     },
     {

@@ -71,10 +71,13 @@ while True :
             add_sex = input("- 성별을 입력하세요: ")
             add_age = input("- 나이를 입력하세요: ")
             add_major = input("- 전공을 입력하세요: ")
-            id_number = stu_list[total_stu-1].get("ID")[3:]
+            id_number = stu_list[total_stu-1].get("ID")[3:] # 기본키인 ID 생성
+            # name과 sex의 속성을 가지는 student Element 생성하고 값 삽입
             student = Element("student", ID="ITT%s" %(digit(int(id_number)+1)), name=add_name, sex=add_sex)
+            # student Element에서 subelement인 age와 major 생성하고 값 삽입
             SubElement(student, "age").text = add_age
             SubElement(student, "major").text = add_major
+            # stduent Element에서 subelement인 practicable_computer_languages 생성
             practicable = SubElement(student, "practicable_computer_languages")
             while True :
                 print("사용 가능한 컴퓨터 언어를 입력하세요.")
@@ -83,10 +86,12 @@ while True :
                     break
                 add_lang_period = input("  > 학습 기간(년/개월 단위): ")
                 add_lang_level = input("  > 수준(상,중,하): ")
+                # 개발언어, 수준의 속성을 가지는 language Element 생성하고 값 삽입
                 language = Element("language", name=add_lang_name, level=add_lang_level)
+                # 개발기간의 속성을 가지는 period Element 생성하고 값 삽입
                 period = Element("period", value=add_lang_period)
-                language.append(period)
-                practicable.append(language)
+                language.append(period) # period Element를 language Element의 하위 element로 연결
+                practicable.append(language) # language Element를 practicable_computer_lanuguages의 하위 element로 연결
             root.append(student)
 
             ElementTree(root).write("students_info.xml")

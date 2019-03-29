@@ -5,7 +5,6 @@ access_key = "XtvjsQxlsgO41hz7VcZ3PmLekszkSNs2bpmvNTR%2Fn3VJ9uy6sI3jd%2B8RmLgU3v
 
 def get_Request_URL (url) : # (1) 통합대기환경 정보(대기오염정보 조회 서비스)
     req = urllib.request.Request(url)
-
     try :
         response = urllib.request.urlopen(req)
         if response.getcode() == 200 :
@@ -35,9 +34,7 @@ def get_Dust_URL () : # 대기오염 정보 (대기오염정보 조회 서비스
 
 def Make_Dust_Xml() : # (1) 대기오염정보 (대기오염정보 조회 서비스) xml 파일 생성하는 함수
     xmlData = get_Dust_URL()
-
     tree = ET.ElementTree(ET.fromstring(xmlData)) # str으로 가져오기 때문에 Tree형태로 만들어줘야함
-
     root = tree.getroot()
     for i in root.getiterator("body") :
         for j in i.getiterator("items") :

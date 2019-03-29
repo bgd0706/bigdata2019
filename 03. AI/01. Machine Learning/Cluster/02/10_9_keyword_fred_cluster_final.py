@@ -52,7 +52,7 @@ def analyze_clusters_keywords_bigram(labels, product_id_name_dic,user_product_di
                                                                      # 딕셔너리에 클러스터 ID를 키로, 상품명을 value로 추가
     for cluster_id, product_name in cluster_item.items() :
         bigram = []
-        product_name_keyword = (' ').join(product_name).replace('  OF  ', ' ').split()
+        product_name_keyword = (' ').join(product_name).replace(' OF ', ' ').split()
             # 각 클러스터 안의 상품명을 join 명령으로 합쳐 하나의 문자열로 만든 뒤 OF를 공백으로 리플레이스하고
         for i in range(0, len(product_name_keyword)-1) :
             bigram.append(' '.join(product_name_keyword[i:i + 2]))

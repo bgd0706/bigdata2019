@@ -26,7 +26,6 @@ new_observations_with_constant = sm.add_constant(new_observations, prepend=True)
 y_predicted = logit_model.predict(new_observations_with_constant)
 y_predicted_rounded=[round(score,0) for score in y_predicted]
 
-# print(y_predicted_rounded)
 count = 0
 for idx in range(len(churn.index)) :
     if churn['churn01'][idx] == y_predicted_rounded[idx] :

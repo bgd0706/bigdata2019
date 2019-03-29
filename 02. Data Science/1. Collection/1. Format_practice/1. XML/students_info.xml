@@ -1,68 +1,81 @@
 <student_list>
-	<student ID="ITT001" name="&#51060;&#50689;&#54840;" sex="&#45224;">
+	<student name="영호" sex="남">
 		<age>45</age>
-		<major>&#44221;&#50689;&#54617;</major>
+		<major>경영학</major>
 		<practicable_computer_languages />
 	</student>
-	<student ID="ITT002" name="&#50980;&#48124;&#49440;" sex="&#50668;">
+	<student name="민선" sex="여">
 		<age>25</age>
-		<major>&#52980;&#54504;&#53552; &#44277;&#54617;</major>
+		<major>컴퓨터 공학</major>
 		<practicable_computer_languages>
-			<language level="&#51473;" name="C">
-				<period value="1&#45380;" />
+			<language name="C" level="중">
+				<period value="1년" />
 			</language>
-			<language level="&#54616;" name="Java">
-				<period value="1&#45380;" />
+			<language name="Java" level="하">
+				<period value="1년" />
 			</language>
-			<language level="&#54616;" name="C++">
-				<period value="6&#44060;&#50900;" />
+			<language name="C++" level="하">
+				<period value="6개월" />
 			</language>
 		</practicable_computer_languages>
 	</student>
-	<student ID="ITT003" name="&#44608;&#49345;&#48124;" sex="&#45224;">
+	<student name="상민" sex="남">
 		<age>30</age>
-		<major>&#51204;&#51088; &#44277;&#54617;</major>
+		<major>전자 공학</major>
 		<practicable_computer_languages>
-			<language level="&#54616;" name="C">
-				<period value="6&#44060;&#50900;" />
+			<language name="C" level="하">
+				<period value="6개월" />
 			</language>
-		<language level="&#54616;" name="C++">
-			<period value="6&#44060;&#50900;" />
+		<language name="C++" level="하">
+			<period value="6개월" />
 		</language>
 		</practicable_computer_languages>
 	</student>
-	<student ID="ITT004" name="&#51060;&#49464;&#51473;" sex="&#45224;">
+	<student name = "세중" sex="남">
 		<age>30</age>
-		<major>&#51221;&#52824;&#50808;&#44368;</major>
+		<major>정치외교</major>
 		<practicable_computer_languages />	
 	</student>
-	<student ID="ITT005" name="&#48149;&#44508;&#46041;" sex="&#45224;">
+	<student name="규동" sex="남">
 		<age>29</age>
-		<major>&#52380;&#47928;&#50864;&#51452;&#44284;&#54617;</major>
+		<major>천문우주과학</major>
 		<practicable_computer_languages>
-			<language level="&#51473;" name="Java">
-				<period value="2&#45380; 6&#44060;&#50900;" />
+			<language name="Java" level="중">
+				<period value="2년 6개월" />
 			</language>
-			<language level="&#51473;&#54616;" name="Ruby">
-				<period value="6&#44060;&#50900;" />
+			<language name = "Ruby" level="중하">
+				<period value="6개월" />
 			</language>
 		</practicable_computer_languages>
 	</student>
-	<student ID="ITT006" name="&#44608;&#52824;&#50864;" sex="&#45224;">
+	<student name="치우" sex="남">
 		<age>30</age>
-		<major>&#49888;&#47928;&#48169;&#49569;&#54617;</major>
-		<practicable_computer_languages />
+		<major>신문방송학</major>
+		<practicable_computer_language />
 	</student>
-	<student ID="ITT007" name="&#48124;&#54788;&#44592;" sex="&#45224;">
+	<student name='현기' sex='남'>
 		<age>28</age>
-		<major>&#53685;&#44228;&#48709;&#45936;&#51060;&#53552;</major>
+		<major>통계빅데이터</major>
 		<practicable_computer_languages>
-			<language level="&#51473;" name="sas">
-				<period value="1&#45380;" />
+			<language name= 'sas' level='중'>
+				<period value = '1년' />
 			</language>
-			<language level="&#54616;" name="R">
-				<period value="1&#45380;" />
+			<language name= 'R' level='하'>
+				<period value = '1년' />
 			</language>
 		</practicable_computer_languages>
 	</student>
-	<student ID="ITT009" name="&#44032;&#44032;" sex="&#45224;"><age>23</age><major>&#50500;&#50500;</major><practicable_computer_languages /></student><student ID="ITT010" name="dkdk" sex="ska"><age>23</age><major>3</major><practicable_computer_languages /></student><student ID="ITT011" name="dkdk" sex="ska"><age>2233</age><major>dk</major><practicable_computer_languages /></student></student_list>
+	<student name="정헌" sex="남">
+		<age>30</age>
+		<major>전자 공학</major>
+		<practicable_computer_languages>
+			<language name="C" level="중">
+				<period value="1년" />
+			</language>
+			<language name="Verilog" level="하">
+				<period value="3개월" />
+			</language>
+		</practicable_computer_languages>
+	</student>
+</student_list>
+

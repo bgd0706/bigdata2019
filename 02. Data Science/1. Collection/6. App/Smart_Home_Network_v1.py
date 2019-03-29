@@ -82,24 +82,26 @@ def update_scheduler () :
     while True :
         if g_AI_Mode == False :
             continue
-        # elif presentMinute == '57' and presentSecond == '30' :
-        #     time.sleep(3)
-        #     get_Realtime_Weather_Info()
         else :
             time.sleep(1800) # 매 30분 마다
-            g_Balcony_Windows = not g_Balcony_Windows
+            print("인공지능 모드를 실행합니다.")
+            get_Realtime_Weather_Info()
+            ai_weather_info()
 
+# 냉장고에 없는 재료를 구매하는 함수
 def purc_want_food (object_food) :
     search_url = "http://traders.ssg.com/search.ssg?target=all&query=%s&filterSiteNo=6002" %object_food
     driver = webdriver.Chrome('C:\chromedriver')
     driver.implicitly_wait(3)
     driver.get(search_url)
 
+# 냉장고에 어떤 재료가 있는지 확인해주는 함수
 def read_ref() :
     global ref_data
     for i in range(len(ref_data)):
         print("%s. %s (이/가) %s 있습니다." % (i + 1, list_name[i], list_quan[i]))
 
+# 냉장고에 있는 재료들 중에서 원하는 재료로 만들수 있는 레시피를 보여주는 함수
 def make_food_ref () :
     global ref_data
     while True :
@@ -108,7 +110,8 @@ def make_food_ref () :
         i = 0
         while True:
             if make_num - 1 == i:
-                search_url = "http://home.ebs.co.kr/cook/board/4/500514/list?bbsId=500514&boardType=2&iframeOn=false&searchCondition=pstCntnSrch&" \
+                search_url = "http://home.ebs.co.kr/cook/board/4/500514/list?bbsId=500514&boardType=2&iframeOn=false" \
+                             "&searchCondition=pstCntnSrch&" \
                              "searchKeyword=%s&searchKeywordCondition=1" % list_name[i]
                 driver = webdriver.Chrome('C:\chromedriver')
                 driver.implicitly_wait(3)
@@ -129,15 +132,12 @@ def use_and_update_ref() :
                 num_to_want = int(input("몇 %s 쓰겠습니까? " % subject_quan[len(subject_quan) - 1]))  # 쓰고 싶은 재료 수
                 if num_to_want > num_to_now:
                     purc_conf = input("현재 냉장고에 있는 수 보다 많습니다. 주문하시겠습니까? (y or n) ")
-                    if purc_conf == 'y' :
-                        purc_want_food(subject_name)
-                    else :
-                        break
+                    if purc_conf == 'y' :purc_want_food(subject_name)
+                    else :break
                 num_to_left = num_to_now - num_to_want  # 남는 재료 수
                 if num_to_left == 0:
                     purc_obj = input("%s 재고가 0입니다. 주문하시겠습니까? (하고싶으면 y, 안하면 n) " % subject_name)
-                    if purc_obj == 'y':
-                        purc_want_food(subject_name)
+                    if purc_obj == 'y':purc_want_food(subject_name)
                     elif purc_obj == 'n':
                         list_name.pop(i)
                         list_quan.pop(i)
@@ -153,8 +153,7 @@ def use_and_update_ref() :
                 ref_data = pd.DataFrame(updated_data)
                 ref_data.to_csv('ref_sub.csv', index=False)
                 break
-
-def add_ref () :
+def add_ref () : # 사온 재료를 냉장고 재고를 추가하는 함수
     global ref_data
     option_choice = int(input("1. 새로운 재고를 추가하겠습니까? 2. 원래 있는 재고 수에 더하시겠습니까? "))
     if option_choice == 1 :
@@ -629,7 +628,8 @@ def ai_weather_info() :
                         if accept == 'y':
                             g_Radiator = not g_Radiator
                             print("난방기가 꺼졌습니다.")
-            if f_json[i]["category"] == "REH": # 습도
+            # 습도
+            if f_json[i]["category"] == "REH":
                 moi = f_json[i]["fcstValue"]
                 if g_Balcony_Windows == False :
                     if moi <= 30 :
@@ -656,8 +656,8 @@ def ai_weather_info() :
                             else :
                                 g_Balcony_Windows = not g_Balcony_Windows
                                 print("창문을 열었습니다.")
-
-            if f_json[i]["category"] == "PTY": # 강수형태
+            # 강수형태
+            if f_json[i]["category"] == "PTY":
                 precipitation = f_json[i]["fcstValue"]
                 if g_Balcony_Windows == True :
                     if precipitation != 0 :
@@ -671,7 +671,8 @@ def ai_weather_info() :
                                 if dust_accept == 'y' :
                                     g_Balcony_Windows = not g_Balcony_Windows
                                     print("창문을 열었습니다.")
-            if f_json[i]["category"] == "SKY": # 하늘상태
+            # 하늘상태
+            if f_json[i]["category"] == "SKY":
                 cloud = f_json[i]["fcstValue"]
                 if 0 <= cloud <= 2 :
                     if g_curtain == False :

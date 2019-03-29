@@ -7,12 +7,13 @@ soup = BeautifulSoup(html, 'html.parser')
 totals = soup
 total = str(totals)
 
-p = re.compile('code=.+title=["](.+)["].+\s+.+\s+.+\s+.+\s+.+\s+.+alt=["]([a-z]+)["].+\s+.+range ac">(.+)<')
+p = re.compile('code=.+title=["](.+)["].+\s+.+\s+.+\s+.+\s+.+\s+.+'
+               'alt=["]([a-z]+)["].+\s+.+range ac">(.+)<')
 
 title = p.findall(total)
 print(title)
 
-f = open('Naver_movie_ranking_regular_expression_2.csv', 'w', newline='')
+f = open('Naver_movie_ranking_regular_expression_2.csv', 'w', newline='', encoding='utf-8')
 csv_writer = csv.writer(f)
 csv_writer.writerow(['순위', '영화명', '변동폭'])
 for i in range(len(title)) :
