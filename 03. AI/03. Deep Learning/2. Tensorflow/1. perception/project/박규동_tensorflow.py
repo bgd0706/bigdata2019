@@ -2,6 +2,12 @@ import pandas as pd
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 
+
+# 수집 데이터 포맷 명시
+# - 데이터 요약 : 버섯의 특징으로 버섯 종류 찾기
+# - 고정 변수 명시 : 22가지 특성 값
+# - 종속 변수 명시 : 버섯의 종류
+
 # 데이터 읽어 들이기
 mr = pd.read_csv("mushroom.csv", header=None)
 
@@ -14,6 +20,7 @@ Y = tf.placeholder(tf.float32, [None, 2])
 label = []
 data = []
 
+# 라벨의 값이 0, 1 중 1개의 값씩 들어가있으므로 인덱스로 하여 전처리
 label_p = [0, 0]
 label_e = [1, 1]
 

@@ -33,4 +33,3 @@ features = tf_transformer.transform(term_counts)
 # 처리된 파일을 저장합니다. 앞으로의 예제에서 사용될 예정입니다.
 with open('processed.pickle', 'wb') as file_handle :
     pickle.dump((vocabulary, features, labels), file_handle)
-
